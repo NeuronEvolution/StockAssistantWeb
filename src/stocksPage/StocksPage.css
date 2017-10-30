@@ -1,0 +1,80 @@
+.StocksPage {
+  width: 100%;
+}
+
+.StocksPage-ControlTab{
+  width: 100%;
+  height: 50px;
+}
+
+.StocksPage-ControlTabItem{
+  width: 100%;
+}
+
+.StocksPage-ControlPanel {
+  width: 100%;
+  height: 50px;
+}
+
+.StocksPage-ControlPanel-ItemDiv {
+  width: 25%;
+  background: #FFF;
+  float: left;
+  height: 100%;
+}
+
+.StocksPage-ControlPanel-Button {
+  width: 100%;
+  height: 100%;
+}
+
+.StocksPage-Divider{
+  width: 100%;
+  height: 2px;
+  background: #666;
+}
+
+.StocksPage-ControlPanel-FilterPanel {
+
+}
+
+.StocksPage-StockList{
+  height:100%;
+  background-color: #EEEEEE;
+}
+
+.StocksPage-StockListItem-Evaluated {
+
+}
+
+.StocksPage-StockListItem-NotEvaluated {
+
+}
+
+.StocksPage-StockListItem-NotEvaluated-StockCode {
+  width: 30%;
+  text-align: left;
+}
+
+.StocksPage-StockListItem-NotEvaluated-StockName {
+  width: 30%;
+  text-align: left;
+}
+
+.StocksPage-StockListItem-NotEvaluated-IndustryName {
+  width: 30%;
+  text-align: left;
+}
+
+.StocksPage-StockListItem-NotEvaluated-EvaluateButtonDiv {
+  height: 100%;
+  width: 10%;
+  float: left;
+  background-color:darkgoldenrod;
+}
+
+.StocksPage-StockListItem-NotEvaluated-EvaluateButton {
+  height: 100%;
+  width: 100%;
+  text-align: center;
+}

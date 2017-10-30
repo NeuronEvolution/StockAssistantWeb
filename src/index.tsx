@@ -5,13 +5,13 @@ import {  Provider } from 'react-redux';
 import { createStore,applyMiddleware} from 'redux';
 import {BrowserRouter,Route} from 'react-router-dom';
 import thunk from 'redux-thunk';
-import apicall from './redux/apicall';
+import apicall from './apis/apicall';
 import logger from 'redux-logger';
-import {rootReducer, RootState} from './redux/redux';
+import { rootReducer} from './redux';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import App from './containers/App';
+import App from './App';
 
-let store=createStore<RootState>(rootReducer,{},applyMiddleware(thunk,apicall,logger));
+let store=createStore(rootReducer,{},applyMiddleware(thunk,apicall,logger));
 
 const theme = createMuiTheme();
 
