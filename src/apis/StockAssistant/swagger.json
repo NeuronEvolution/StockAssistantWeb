@@ -10,10 +10,10 @@
   },
   "basePath": "/api/stock-assistant/v1",
   "consumes": [
-    "application/json;charset=utf-8"
+    "application/json"
   ],
   "produces": [
-    "application/json;charset=utf-8"
+    "application/json"
   ],
   "securityDefinitions": {
     "Bearer": {
@@ -69,7 +69,7 @@
     }
   },
   "paths": {
-    "/{userId}/indices": {
+    "/{userId}/stockIndices": {
       "parameters": [
         {
           "in": "path",
@@ -81,7 +81,7 @@
       ],
       "get": {
         "summary": "Get user indices",
-        "operationId": "UserIndexList",
+        "operationId": "UserStockIndexList",
         "security": [
           {
           }
@@ -104,8 +104,8 @@
         }
       },
       "post": {
-        "summary": "save",
-        "operationId": "UserIndexSave",
+        "summary": "add",
+        "operationId": "UserStockIndexAdd",
         "parameters": [
           {
             "in": "body",
@@ -130,7 +130,7 @@
         }
       }
     },
-    "/{userId}/indices/rename": {
+    "/{userId}/stockIndices/rename": {
       "parameters": [
         {
           "in": "path",
@@ -142,7 +142,7 @@
       ],
       "post": {
         "summary": "",
-        "operationId": "UserIndexRename",
+        "operationId": "UserStockIndexRename",
         "parameters": [
           {
             "in": "query",
@@ -172,7 +172,7 @@
         }
       }
     },
-    "/{userId}/indices/{indexId}": {
+    "/{userId}/stockIndices/{indexName}": {
       "parameters": [
         {
           "in": "path",
@@ -183,7 +183,7 @@
         },
         {
           "in": "path",
-          "name": "indexId",
+          "name": "indexName",
           "description": "index id",
           "type": "string",
           "required": true
@@ -191,8 +191,34 @@
       ],
       "get": {
         "summary": "Get user index",
-        "operationId": "UserIndexGet",
+        "operationId": "UserStockIndexGet",
         "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/UserStockIndex"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      },
+      "post": {
+        "summary": "update",
+        "operationId": "UserStockIndexUpdate",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Index",
+            "description": "Index",
+            "schema": {
+              "$ref": "#/definitions/UserStockIndex"
+            },
+            "required": true
+          }
         ],
         "responses": {
           "200": {
@@ -208,7 +234,7 @@
       },
       "delete": {
         "summary": "",
-        "operationId": "UserIndexDelete",
+        "operationId": "UserStockIndexDelete",
         "parameters": [
         ],
         "responses": {
@@ -268,37 +294,16 @@
         "responses": {
           "200": {
             "description": "ok",
+            "headers": {
+              "Neuron-X-NextPageToken":{
+                "type": "string"
+              }
+            },
             "schema": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/UserStockEvaluate"
               }
-            }
-          },
-          "default": {
-            "$ref": "#/responses/ErrorResponse"
-          }
-        }
-      },
-      "post": {
-        "summary": "save",
-        "operationId": "UserStockEvaluateSave",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "stockEvaluate",
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/UserStockEvaluate"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "$ref": "#/definitions/UserStockEvaluate"
             }
           },
           "default": {
@@ -552,6 +557,44 @@
           }
         }
       }
+    },
+    "/stockIndexAdvices": {
+      "get": {
+        "summary": "list",
+        "operationId": "StockIndexAdviceList",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageToken",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "string",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "headers": {
+              "Neuron-X-NextPageToken":{
+                "type": "string"
+              }
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StockIndexAdvice"
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -622,36 +665,36 @@
           "description": "Exchange id",
           "type": "string"
         },
-        "exchangeName":{
+        "exchangeName": {
           "description": "Exchange name",
           "type": "string"
         },
-        "stockCode":{
+        "stockCode": {
           "description": "Stock code",
-          "type":"string"
+          "type": "string"
         },
-        "stockNameCN":{
+        "stockNameCN": {
           "description": "Stock name cn",
           "type": "string"
         },
-        "launchDate":{
+        "launchDate": {
           "description": "Launch date",
           "type": "string",
           "format": "date-time"
         },
-        "websiteUrl":{
+        "websiteUrl": {
           "description": "Website url",
           "type": "string"
         },
-        "industryName":{
+        "industryName": {
           "description": "Industry name",
           "type": "string"
         },
-        "cityNameCN":{
+        "cityNameCN": {
           "description": "City name cn",
           "type": "string"
         },
-        "provinceNameCN":{
+        "provinceNameCN": {
           "description": "Province name cn",
           "type": "string"
         }
@@ -679,6 +722,22 @@
           "description": "update time",
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "StockIndexAdvice": {
+      "id": "StockIndex",
+      "description": "stock index",
+      "type": "object",
+      "properties": {
+        "indexName": {
+          "description": "name",
+          "type": "string"
+        },
+        "usedCount": {
+          "description": "used count",
+          "type": "string",
+          "format": "int64"
         }
       }
     }

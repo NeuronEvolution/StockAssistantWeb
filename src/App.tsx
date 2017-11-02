@@ -8,8 +8,14 @@ import MyPage from "./myPage/MyPage";
 import {connect} from "react-redux";
 import {
     onAppTabItemClick, APP_TAB_ITEM_CLICK_MESSAGES, APP_TAB_ITEM_CLICK_STOCKS, APP_TAB_ITEM_CLICK_SETTINGS,
-    APP_TAB_ITEM_CLICK_MY,
-    apiUserLogin, apiStockEvaluateList, apiNotEvaluatedList, RootState, APP_TAB_ITEM_CLICK_INDEX_MANAGE
+    APP_TAB_ITEM_CLICK_MY, RootState, APP_TAB_ITEM_CLICK_INDEX_MANAGE,
+    apiUserLogin, apiStockEvaluateList, apiNotEvaluatedList,
+    apiUserStockIndexList,
+    apiUserStockIndexGet,
+    apiUserStockIndexAdd,
+    apiUserStockIndexUpdate,
+    apiUserStockIndexDelete,
+    apiUserStockIndexRename
 } from "./redux";
 import LoginPage from "./loginPage/LoginPage";
 import IndexManagePage from "./indexManagePage/IndexManagePage";
@@ -20,6 +26,12 @@ export interface Props {
     apiUserLogin: any
     apiStockEvaluateList: any
     apiNotEvaluatedList:any
+    apiUserStockIndexList:any
+    apiUserStockIndexGet:any
+    apiUserStockIndexAdd:any
+    apiUserStockIndexUpdate:any
+    apiUserStockIndexDelete:any
+    apiUserStockIndexRename:any
 }
 
 const STOCKS_PAGE_NAME="STOCKS_PAGE_NAME"
@@ -49,14 +61,23 @@ class App extends React.Component<Props,State> {
         let content: JSX.Element
         switch (this.state.currentPageName) {
             case STOCKS_PAGE_NAME: {
-                content = <StocksPage stockEvaluateList={this.props.rootState.stockEvaluateList}
-                                      notEvaluatedList={this.props.rootState.notEvaluatedList}
-                                      apiStockEvaluatedList={this.props.apiStockEvaluateList}
-                                      apiNotEvaluatedList={this.props.apiNotEvaluatedList}/>;
+                content =
+                    <StocksPage stockEvaluateList={this.props.rootState.stockEvaluateList}
+                                notEvaluatedList={this.props.rootState.notEvaluatedList}
+                                apiStockEvaluatedList={this.props.apiStockEvaluateList}
+                                apiNotEvaluatedList={this.props.apiNotEvaluatedList}
+                    />;
                 break;
             }
             case INDEX_MANAGE_PAGE_NAME: {
-                content = <IndexManagePage/>
+                content =
+                    <IndexManagePage rootState={this.props.rootState}
+                                     apiUserStockIndexList={this.props.apiUserStockIndexList}
+                                     apiUserStockIndexAdd={this.props.apiUserStockIndexAdd}
+                                     apiUserStockIndexUpdate={this.props.apiUserStockIndexUpdate}
+                                     apiUserStockIndexDelete={this.props.apiUserStockIndexDelete}
+                                     apiUserStockIndexRename={this.props.apiUserStockIndexRename}
+                    />;
                 break;
             }
             case MESSAGES_PAGE_NAME:
@@ -139,5 +160,11 @@ export default connect(selectProps,
         onAppTabItemClick,
         apiUserLogin,
         apiStockEvaluateList,
-        apiNotEvaluatedList
+        apiNotEvaluatedList,
+        apiUserStockIndexList,
+        apiUserStockIndexGet,
+        apiUserStockIndexAdd,
+        apiUserStockIndexUpdate,
+        apiUserStockIndexDelete,
+        apiUserStockIndexRename,
     })(App);

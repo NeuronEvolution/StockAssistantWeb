@@ -1,6 +1,6 @@
 import * as React from 'react'
 import "./StocksPage.css"
-import List, { ListItem } from 'material-ui/List';
+import List,{ ListItem } from 'material-ui/List';
 import Button from 'material-ui/Button'
 import {UserStockEvaluate} from "../apis/StockAssistant/gen/api";
 import Tabs, { Tab } from 'material-ui/Tabs';
@@ -21,7 +21,7 @@ export default class StocksPage extends React.Component<Props,State> {
         this.setState({controlTabIndex: 0})
     }
 
-     renderEvaluatedItem(stockEvaluate: UserStockEvaluate) {
+    renderEvaluatedItem(stockEvaluate: UserStockEvaluate) {
         return (
             <ListItem key={stockEvaluate.stockId} button={true} divider={true}>
                 <label>{stockEvaluate.stockCode}</label>
@@ -35,11 +35,20 @@ export default class StocksPage extends React.Component<Props,State> {
     renderNotEvaluatedItem(stockEvaluate: UserStockEvaluate) {
         return (
             <ListItem key={stockEvaluate.stockId} button={true} divider={true}>
-                <label className="StocksPage-StockListItem-NotEvaluated-StockCode">{stockEvaluate.stockCode}</label>
-                <label className="StocksPage-StockListItem-NotEvaluated-StockName">{stockEvaluate.stockNameCN}</label>
-                <label className="StocksPage-StockListItem-NotEvaluated-IndustryName">{stockEvaluate.industryName}</label>
+                <label className="StocksPage-StockListItem-NotEvaluated-StockCode">
+                    {stockEvaluate.stockCode}
+                </label>
+                <label className="StocksPage-StockListItem-NotEvaluated-StockName">
+                    {stockEvaluate.stockNameCN}
+                </label>
+                <label
+                    className="StocksPage-StockListItem-NotEvaluated-IndustryName">
+                    {stockEvaluate.industryName}
+                </label>
                 <div className="StocksPage-StockListItem-NotEvaluated-EvaluateButtonDiv">
-                    <Button className="StocksPage-StockListItem-NotEvaluated-EvaluateButton">立即评估</Button>
+                    <Button className="StocksPage-StockListItem-NotEvaluated-EvaluateButton">
+                        立即评估
+                    </Button>
                 </div>
             </ListItem>
         )
@@ -51,7 +60,7 @@ export default class StocksPage extends React.Component<Props,State> {
                 <Tabs className="StocksPage-ControlTab" value={this.state.controlTabIndex}
                       onChange={(event: any, v: any) => {
                           this.setState({controlTabIndex: v})
-                          switch (v){
+                          switch (v) {
                               case 0:
                                   this.props.apiStockEvaluatedList("18616781549")
                                   break;
@@ -102,6 +111,11 @@ export default class StocksPage extends React.Component<Props,State> {
                     this.props.stockEvaluateList.map(this.renderEvaluatedItem.bind(this))}
                     {this.state.controlTabIndex == 1 && this.props.notEvaluatedList &&
                     this.props.notEvaluatedList.map(this.renderNotEvaluatedItem.bind(this))}
+                    <ListItem className="StocksPage-StockListItem-NotEvaluated-More">
+                        <Button className="StocksPage-StockListItem-NotEvaluated-MoreButton">
+                            更多
+                        </Button>
+                    </ListItem>
                 </List>
             </div>
         )

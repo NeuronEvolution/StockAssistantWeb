@@ -1,7 +1,20 @@
 import {AnyAction, combineReducers} from 'redux'
-import {API,API_USER_LOGIN,API_STOCKS_EVALUATED_LIST,API_NOT_EVALUATED_LIST} from "./apis/apicall";
 import {Props as AppProps} from "./App";
-import {UserStockEvaluate} from "./apis/StockAssistant/gen/api";
+import {
+    DefaultApiFactory, InlineResponseDefault, UserStockEvaluate,
+    UserStockIndex
+} from "./apis/StockAssistant/gen/api";
+
+function responseError(response:Response):Promise<InlineResponseDefault> {
+    return response.json().then((json) => {
+        return json
+    }).catch((err) => {
+        return {status: response.status, message: err.toString}
+    })
+}
+
+const STOCK_ASSISTANT_API_URL='http://127.0.0.1:8082/api/stock-assistant/v1';
+let stockAssistantApi = DefaultApiFactory(fetch, STOCK_ASSISTANT_API_URL);
 
 //------------------------- uI events
 export const APP_TAB_ITEM_CLICK_MESSAGES= "APP_TAB_ITEM_CLICK_MESSAGES"
@@ -23,15 +36,9 @@ export const USER_LOGIN_REQUEST='USER_LOGIN_REQUEST'
 export const USER_LOGIN_SUCCESS='USER_LOGIN_SUCCESS'
 export const USER_LOGIN_FAILURE='USER_LOGIN_FAILURE'
 export function apiUserLogin(userName:string,password:string) {
-    return {
-        [API]: {
-            api: API_USER_LOGIN,
-            types: [USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGIN_FAILURE],
-            request: {
-                userName: userName,
-                password: password
-            }
-        }
+    return function (dispatch:any,getState:any) {
+        dispatch({type:USER_LOGIN_REQUEST})
+        dispatch({type:USER_LOGIN_SUCCESS,payload:{jwt:"jwt18616781549"}})
     }
 }
 
@@ -39,14 +46,16 @@ export const STOCK_EVALUATE_LIST_REQUEST='STOCK_EVALUATE_LIST_REQUEST'
 export const STOCK_EVALUATE_LIST_SUCCESS='STOCK_EVALUATE_LIST_SUCCESS'
 export const STOCK_EVALUATE_LIST_FAILURE='STOCK_EVALUATE_LIST_FAILURE'
 export function apiStockEvaluateList(userId:string) {
-    return {
-        [API]: {
-            api: API_STOCKS_EVALUATED_LIST,
-            types: [STOCK_EVALUATE_LIST_REQUEST, STOCK_EVALUATE_LIST_SUCCESS, STOCK_EVALUATE_LIST_FAILURE],
-            request: {
-                userId: userId
-            }
-        }
+    return function (dispatch: any, getState: any) {
+        dispatch({type: STOCK_EVALUATE_LIST_REQUEST})
+
+        return stockAssistantApi.userStockEvaluateList({
+            userId: userId
+        }).then((userStockEvaluateList) => {
+            dispatch({type: STOCK_EVALUATE_LIST_SUCCESS, payload: userStockEvaluateList})
+        }).catch((response) => {
+            dispatch({type: STOCK_EVALUATE_LIST_FAILURE, error: true, payload: responseError(response)})
+        })
     }
 }
 
@@ -54,23 +63,117 @@ export const NOT_EVALUATED_LIST_REQUEST='NOT_EVALUATED_LIST_REQUEST'
 export const NOT_EVALUATED_LIST_SUCCESS='NOT_EVALUATED_LIST_SUCCESS'
 export const NOT_EVALUATED_LIST_FAILURE='NOT_EVALUATED_LIST_FAILURE'
 export function apiNotEvaluatedList(userId:string) {
-    return {
-        [API]: {
-            api: API_NOT_EVALUATED_LIST,
-            types: [NOT_EVALUATED_LIST_REQUEST, NOT_EVALUATED_LIST_SUCCESS, NOT_EVALUATED_LIST_FAILURE],
-            request: {
-                userId: userId
-            }
-        }
+    return function (dispatch: any, getState: any) {
+        dispatch({type: NOT_EVALUATED_LIST_REQUEST});
+
+        return stockAssistantApi.userStockEvaluateList({
+            userId: userId,
+            notEvaluated: "true"
+        }).then((userStockEvaluateList) => {
+            dispatch({type: NOT_EVALUATED_LIST_SUCCESS, payload: userStockEvaluateList})
+        }).catch((response) => {
+            dispatch({type: NOT_EVALUATED_LIST_FAILURE, error: true, payload: responseError(response)})
+        })
+    }
+}
+
+export const USER_STOCK_INDEX_LIST_REQUEST='USER_STOCK_INDEX_LIST_REQUEST';
+export const USER_STOCK_INDEX_LIST_SUCCESS='USER_STOCK_INDEX_LIST_SUCCESS';
+export const USER_STOCK_INDEX_LIST_FAILURE='USER_STOCK_INDEX_LIST_FAILURE';
+export function apiUserStockIndexList(userId:string) {
+    return function (dispatch: any, getState: any) {
+        dispatch({type: USER_STOCK_INDEX_LIST_REQUEST})
+
+        return stockAssistantApi.userStockIndexList({userId}).then((userStockIndexList) => {
+            dispatch({type: USER_STOCK_INDEX_LIST_SUCCESS, payload: userStockIndexList})
+        }).catch((response) => {
+            dispatch({type: USER_STOCK_INDEX_LIST_FAILURE, error: true, payload: responseError(response)})
+        })
+    }
+}
+
+export const USER_STOCK_INDEX_GET_REQUEST='USER_STOCK_INDEX_GET_REQUEST';
+export const USER_STOCK_INDEX_GET_SUCCESS='USER_STOCK_INDEX_GET_SUCCESS';
+export const USER_STOCK_INDEX_GET_FAILURE='USER_STOCK_INDEX_GET_FAILURE';
+export function apiUserStockIndexGet(userId:string) {
+    return function (dispatch:any,getState:any) {
+
+    }
+}
+
+export const USER_STOCK_INDEX_ADD_REQUEST='USER_STOCK_INDEX_ADD_REQUEST';
+export const USER_STOCK_INDEX_ADD_SUCCESS='USER_STOCK_INDEX_ADD_SUCCESS';
+export const USER_STOCK_INDEX_ADD_FAILURE='USER_STOCK_INDEX_ADD_FAILURE';
+export function apiUserStockIndexAdd(userId:string,userStockIndex:UserStockIndex) {
+    return function (dispatch: any, getState: any) {
+        dispatch({type: USER_STOCK_INDEX_ADD_REQUEST})
+
+        return stockAssistantApi.userStockIndexAdd({
+            userId: userId,
+            index: userStockIndex
+        }).then((userStockIndex) => {
+            dispatch({type: USER_STOCK_INDEX_ADD_SUCCESS, payload: userStockIndex})
+
+            dispatch(apiUserStockIndexList(userId))//refresh
+        }).catch((response) => {
+            dispatch({type: USER_STOCK_INDEX_ADD_FAILURE, error: true, payload: responseError(response)})
+
+            dispatch(apiUserStockIndexList(userId))//refresh
+        })
+    }
+}
+
+export const USER_STOCK_INDEX_UPDATE_REQUEST='USER_STOCK_INDEX_UPDATE_REQUEST';
+export const USER_STOCK_INDEX_UPDATE_SUCCESS='USER_STOCK_INDEX_UPDATE_SUCCESS';
+export const USER_STOCK_INDEX_UPDATE_FAILURE='USER_STOCK_INDEX_UPDATE_FAILURE';
+export function apiUserStockIndexUpdate(userId:string,userStockIndex:UserStockIndex) {
+    if (!userStockIndex.name) {
+        console.error("!userStockIndex.name")
+        return
+    }
+
+    return function (dispatch: any, getState: any) {
+        dispatch({type: USER_STOCK_INDEX_UPDATE_REQUEST})
+
+        return stockAssistantApi.userStockIndexUpdate({
+            userId: userId, indexName: userStockIndex.name ? userStockIndex.name : "", index: userStockIndex
+        }).then((userStockIndex) => {
+            dispatch({type: USER_STOCK_INDEX_UPDATE_SUCCESS, payload: userStockIndex})
+
+            dispatch(apiUserStockIndexList(userId))//refresh
+        }).catch((response) => {
+            dispatch({type: USER_STOCK_INDEX_UPDATE_FAILURE, error: true, payload: responseError(response)})
+
+            dispatch(apiUserStockIndexList(userId))//refresh
+        })
+    }
+}
+
+export const USER_STOCK_INDEX_DELETE_REQUEST='USER_STOCK_INDEX_DELETE_REQUEST';
+export const USER_STOCK_INDEX_DELETE_SUCCESS='USER_STOCK_INDEX_DELETE_SUCCESS';
+export const USER_STOCK_INDEX_DELETE_FAILURE='USER_STOCK_INDEX_DELETE_FAILURE';
+export function apiUserStockIndexDelete(userId:string) {
+    return function (dispatch:any,getState:any) {
+
+    }
+}
+
+export const USER_STOCK_INDEX_RENAME_REQUEST='USER_STOCK_INDEX_RENAME_REQUEST';
+export const USER_STOCK_INDEX_RENAME_SUCCESS='USER_STOCK_INDEX_RENAME_SUCCESS';
+export const USER_STOCK_INDEX_RENAME_FAILURE='USER_STOCK_INDEX_RENAME_FAILURE';
+export function apiUserStockIndexRename(userId:string) {
+    return function (dispatch:any,getState:any) {
+
     }
 }
 
 //------------------------- states
 export interface RootState {
-    session:Session
+    session: Session
     user: User
-    stockEvaluateList:Array<UserStockEvaluate>
-    notEvaluatedList:Array<UserStockEvaluate>
+    stockEvaluateList: Array<UserStockEvaluate>
+    notEvaluatedList: Array<UserStockEvaluate>
+    userStockIndexList: Array<UserStockIndex>
 }
 
 export interface Session{
@@ -165,10 +268,40 @@ function notEvaluatedListReducer(notEvaluatedList:Array<UserStockEvaluate>,actio
     }
 }
 
+function userStockIndexListReducer(list:Array<UserStockIndex>, action:AnyAction) {
+    if (list == null) {
+        return []
+    }
+
+    switch (action.type) {
+        case USER_STOCK_INDEX_LIST_REQUEST:
+            return list;
+        case USER_STOCK_INDEX_LIST_SUCCESS:
+            return action.payload;
+        case USER_STOCK_INDEX_LIST_FAILURE:
+            return list;
+        case USER_STOCK_INDEX_ADD_REQUEST:
+            return list;
+        case USER_STOCK_INDEX_ADD_SUCCESS:
+            return list;
+        case USER_STOCK_INDEX_ADD_FAILURE:
+            return list;
+        case USER_STOCK_INDEX_UPDATE_REQUEST:
+            return list;
+        case USER_STOCK_INDEX_UPDATE_SUCCESS:
+            return list;
+        case USER_STOCK_INDEX_UPDATE_FAILURE:
+            return list;
+        default:
+            return list
+    }
+}
+
 export const rootReducer=combineReducers({
     appProps:appStateReducer,
     session:loginReducer,
     user:userReducer,
     stockEvaluateList:stockEvaluateListReducer,
-    notEvaluatedList:notEvaluatedListReducer
+    notEvaluatedList:notEvaluatedListReducer,
+    userStockIndexList:userStockIndexListReducer
 });

@@ -2,5 +2,105 @@
     width: 100%;
     height: 100%;
     background-color: #FFFFFF;
+}
+
+.IndexManagePage-Mine{
+    float: left;
+    width: 50%;
+    height: 100%;
+}
+
+.IndexManagePage-AI{
+    float: left;
+    width: 50%;
+    height: 100%;
+    background-color: #DDDDDD;
+}
+
+
+.IndexManagePage-Mine-Header-div{
+    height: 40px;
+    padding-top: 20px;
+    padding-left: 20px;
+    font-size: large;
+}
+
+.IndexManagePage-Mine-Header-Title-label {
+    float: left;
+    font-size: x-large;
+}
+
+.IndexManagePage-Mine-List-div{
+
+}
+
+.IndexManagePage-Mine-List{
+
+}
+
+.IndexManagePage-Mine-ListItem{
+
+}
+
+.IndexManagePage-Mine-ListItem-Name{
+    width: 10%;
+    text-align: left;
+}
+
+.IndexManagePage-Mine-ListItem-EvalWeight{
+    width: 10%;
+    text-align: left;
+}
+
+.IndexManagePage-Mine-ListItem-NIWeight {
+    width: 10%;
+    text-align: left;
+}
+
+.IndexManagePage-Mine-ListItem-AIWeight{
+    width: 10%;
+    text-align: left;
+}
+
+.IndexManagePage-Mine-ListItem-Desc {
+    width: 40%;
+    text-align: left;
+}
+
+.IndexManagePage-Mine-ListItem-Edit-button {
+    height: 100%;
+}
+
+.IndexManagePage-Mine-ListItem-Delete-button {
+    height: 100%;
+}
+
+.IndexManagePage-Mine-List-Add－div{
+    background-color: #DDDDDD;
+}
+
+.IndexManagePage-Mine-List-Add-Name{
+}
+
+.IndexManagePage-Mine-List-Add-button{
+}
+
+.IndexManagePage-Mine-List-Add-button-label{
+    font-size: large;
+}
+
+.IndexManagePage-AI-Header-div{
+    height: 40px;
+    padding-top: 20px;
+    padding-left: 20px;
+    font-size: large;
+}
+
+.IndexManagePage-AI-Header-Title-label{
+    float: left;
+    font-size: x-large;
+}
+
+.IndexManagePage-AI-List{
 
 }
