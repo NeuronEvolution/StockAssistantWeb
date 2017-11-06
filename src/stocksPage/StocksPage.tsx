@@ -4,19 +4,21 @@ import List,{ ListItem } from 'material-ui/List';
 import Button from 'material-ui/Button'
 import {UserStockEvaluate} from "../apis/StockAssistant/gen/api";
 import Tabs, { Tab } from 'material-ui/Tabs';
+import {apiNotEvaluatedList,apiStockEvaluateList, RootState} from "../redux";
+import {connect} from "react-redux";
 
 export interface Props {
     stockEvaluateList: Array<UserStockEvaluate>
     notEvaluatedList: Array<UserStockEvaluate>
     apiNotEvaluatedList:any
-    apiStockEvaluatedList:any
+    apiStockEvaluateList:any
 }
 
 interface State {
     controlTabIndex: number
 }
 
-export default class StocksPage extends React.Component<Props,State> {
+class StocksPage extends React.Component<Props,State> {
     componentWillMount() {
         this.setState({controlTabIndex: 0})
     }
@@ -62,7 +64,7 @@ export default class StocksPage extends React.Component<Props,State> {
                           this.setState({controlTabIndex: v})
                           switch (v) {
                               case 0:
-                                  this.props.apiStockEvaluatedList("18616781549")
+                                  this.props.apiStockEvaluateList("18616781549")
                                   break;
                               case 1:
                                   this.props.apiNotEvaluatedList("18616781549")
@@ -121,3 +123,15 @@ export default class StocksPage extends React.Component<Props,State> {
         )
     }
 }
+
+function selectProps(rootState:RootState) {
+    return {
+        stockEvaluateList: rootState.stockEvaluateList,
+        notEvaluatedList: rootState.notEvaluatedList
+    }
+}
+
+export default connect(selectProps,{
+    apiNotEvaluatedList,
+    apiStockEvaluateList
+})(StocksPage)

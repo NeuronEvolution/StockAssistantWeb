@@ -7,31 +7,26 @@ import SettingsPage from "./settingsPage/SettingsPage";
 import MyPage from "./myPage/MyPage";
 import {connect} from "react-redux";
 import {
+    errorMessage,
     onAppTabItemClick, APP_TAB_ITEM_CLICK_MESSAGES, APP_TAB_ITEM_CLICK_STOCKS, APP_TAB_ITEM_CLICK_SETTINGS,
     APP_TAB_ITEM_CLICK_MY, RootState, APP_TAB_ITEM_CLICK_INDEX_MANAGE,
-    apiUserLogin, apiStockEvaluateList, apiNotEvaluatedList,
-    apiUserStockIndexList,
-    apiUserStockIndexGet,
-    apiUserStockIndexAdd,
-    apiUserStockIndexUpdate,
-    apiUserStockIndexDelete,
-    apiUserStockIndexRename
+    apiUserLogin
 } from "./redux";
 import LoginPage from "./loginPage/LoginPage";
 import IndexManagePage from "./indexManagePage/IndexManagePage";
+import Dialog, {
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from 'material-ui/Dialog';
+import Button from 'material-ui/Button';
 
 export interface Props {
     rootState:RootState
+    errorMessage:any,
     onAppTabItemClick: any
     apiUserLogin: any
-    apiStockEvaluateList: any
-    apiNotEvaluatedList:any
-    apiUserStockIndexList:any
-    apiUserStockIndexGet:any
-    apiUserStockIndexAdd:any
-    apiUserStockIndexUpdate:any
-    apiUserStockIndexDelete:any
-    apiUserStockIndexRename:any
 }
 
 const STOCKS_PAGE_NAME="STOCKS_PAGE_NAME"
@@ -54,7 +49,25 @@ class App extends React.Component<Props,State> {
     }
 
     componentDidMount() {
-        this.props.apiStockEvaluateList(this.props.rootState.user.id)
+
+    }
+
+    renderErrorMessage(){
+        return (
+            <Dialog open={this.props.rootState.errorMessage!=null}>
+                <DialogTitle>发生了错误</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {this.props.rootState.errorMessage}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={()=>{this.props.errorMessage(null)}} color="primary" autoFocus>
+                        我知道了
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        )
     }
 
     render() {
@@ -62,22 +75,12 @@ class App extends React.Component<Props,State> {
         switch (this.state.currentPageName) {
             case STOCKS_PAGE_NAME: {
                 content =
-                    <StocksPage stockEvaluateList={this.props.rootState.stockEvaluateList}
-                                notEvaluatedList={this.props.rootState.notEvaluatedList}
-                                apiStockEvaluatedList={this.props.apiStockEvaluateList}
-                                apiNotEvaluatedList={this.props.apiNotEvaluatedList}
-                    />;
+                    <StocksPage/>;
                 break;
             }
             case INDEX_MANAGE_PAGE_NAME: {
                 content =
-                    <IndexManagePage rootState={this.props.rootState}
-                                     apiUserStockIndexList={this.props.apiUserStockIndexList}
-                                     apiUserStockIndexAdd={this.props.apiUserStockIndexAdd}
-                                     apiUserStockIndexUpdate={this.props.apiUserStockIndexUpdate}
-                                     apiUserStockIndexDelete={this.props.apiUserStockIndexDelete}
-                                     apiUserStockIndexRename={this.props.apiUserStockIndexRename}
-                    />;
+                    <IndexManagePage/>;
                 break;
             }
             case MESSAGES_PAGE_NAME:
@@ -105,7 +108,6 @@ class App extends React.Component<Props,State> {
                         <List>
                             <ListItem key={"stocks"} button={true} divider={true} onClick={() => {
                                 this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_STOCKS)
-                                this.props.apiStockEvaluateList(this.props.rootState.user.id)
                                 this.setState({currentPageName: STOCKS_PAGE_NAME})
                             }}>
                                 <label className="App-LeftPanel-Menu-Item-Text">股票</label>
@@ -146,6 +148,7 @@ class App extends React.Component<Props,State> {
                             </div> : null
                     }
                 </div>
+                {this.renderErrorMessage()}
             </div>
         );
     };
@@ -157,14 +160,7 @@ function selectProps(rootState:RootState) {
 
 export default connect(selectProps,
     {
+        errorMessage,
         onAppTabItemClick,
         apiUserLogin,
-        apiStockEvaluateList,
-        apiNotEvaluatedList,
-        apiUserStockIndexList,
-        apiUserStockIndexGet,
-        apiUserStockIndexAdd,
-        apiUserStockIndexUpdate,
-        apiUserStockIndexDelete,
-        apiUserStockIndexRename,
     })(App);

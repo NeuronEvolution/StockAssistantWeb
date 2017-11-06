@@ -146,14 +146,14 @@
         "parameters": [
           {
             "in": "query",
-            "name": "oldName",
+            "name": "nameOld",
             "description": "old name",
             "type": "string",
             "required": true
           },
           {
             "in": "query",
-            "name": "newName",
+            "name": "nameNew",
             "description": "new name",
             "type": "string",
             "required": true
@@ -272,7 +272,7 @@
             "in": "query",
             "name": "pageSize",
             "description": "page size",
-            "type": "string",
+            "type": "integer",
             "format": "int32",
             "required": false
           },
@@ -571,7 +571,7 @@
           {
             "in": "query",
             "name": "pageSize",
-            "type": "string",
+            "type": "integer",
             "format": "int32"
           }
         ],
@@ -628,17 +628,12 @@
         },
         "evalWeight": {
           "description": "Eval weight",
-          "type": "string",
+          "type": "number",
           "format": "int32"
         },
         "aiWeight": {
           "description": "ai weight",
-          "type": "string",
-          "format": "int32"
-        },
-        "niWeight": {
-          "description": "ni weight",
-          "type": "string",
+          "type": "number",
           "format": "int32"
         }
       }
@@ -654,7 +649,7 @@
         },
         "totalScore": {
           "description": "score",
-          "type": "string",
+          "type": "number",
           "format": "double"
         },
         "evalRemark": {
@@ -711,7 +706,7 @@
         },
         "evalStars": {
           "description": "eval stars",
-          "type": "string",
+          "type": "integer",
           "format": "int32"
         },
         "evalRemark": {
@@ -736,7 +731,7 @@
         },
         "usedCount": {
           "description": "used count",
-          "type": "string",
+          "type": "integer",
           "format": "int64"
         }
       }

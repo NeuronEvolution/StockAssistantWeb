@@ -8,15 +8,8 @@
     float: left;
     width: 50%;
     height: 100%;
+    background-color: #EEEEEE;
 }
-
-.IndexManagePage-AI{
-    float: left;
-    width: 50%;
-    height: 100%;
-    background-color: #DDDDDD;
-}
-
 
 .IndexManagePage-Mine-Header-div{
     height: 40px;
@@ -62,11 +55,6 @@
     text-align: left;
 }
 
-.IndexManagePage-Mine-ListItem-Desc {
-    width: 40%;
-    text-align: left;
-}
-
 .IndexManagePage-Mine-ListItem-Edit-button {
     height: 100%;
 }
@@ -75,18 +63,20 @@
     height: 100%;
 }
 
-.IndexManagePage-Mine-List-Add－div{
-    background-color: #DDDDDD;
-}
-
 .IndexManagePage-Mine-List-Add-Name{
 }
 
 .IndexManagePage-Mine-List-Add-button{
+    float: right;
 }
 
 .IndexManagePage-Mine-List-Add-button-label{
-    font-size: large;
+}
+
+.IndexManagePage-AI{
+    float: left;
+    width: 50%;
+    height: 100%;
 }
 
 .IndexManagePage-AI-Header-div{
@@ -103,4 +93,21 @@
 
 .IndexManagePage-AI-List{
 
+}
+
+.IndexManagePage-AI-ListItem{
+
+}
+.IndexManagePage-AI-ListItem-Name{
+    width: 20%;
+    text-align: left;
+}
+
+.IndexManagePage-AI-ListItem-UsedCount{
+    width: 20%;
+    text-align: left;
+}
+
+.IndexManagePage-AI-ListItem-Use-button{
+    float: right;
 }
