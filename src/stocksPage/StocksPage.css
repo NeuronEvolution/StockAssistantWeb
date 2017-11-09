@@ -41,48 +41,6 @@
 .StocksPage-StockList{
 }
 
-.StocksPage-StockListItem-Evaluated {
-
-}
-
-.StocksPage-StockListItem-NotEvaluated {
-
-}
-
-.StocksPage-StockListItem-NotEvaluated-StockCode {
-  width: 30%;
-  text-align: left;
-}
-
-.StocksPage-StockListItem-NotEvaluated-StockName {
-  width: 30%;
-  text-align: left;
-}
-
-.StocksPage-StockListItem-NotEvaluated-IndustryName {
-  width: 30%;
-  text-align: left;
-}
-
-.StocksPage-StockListItem-NotEvaluated-EvaluateButtonDiv {
-  height: 100%;
-  width: 10%;
-  float: right;
-  background-color:darkgoldenrod;
-}
-
-.StocksPage-StockListItem-NotEvaluated-EvaluateButton {
-  height: 100%;
-  width: 100%;
-  text-align: center;
-}
-
-.StocksPage-StockListItem-NotEvaluated-More {
-  height: 100%;
-  width: 100%;
-}
-
-.StocksPage-StockListItem-NotEvaluated-MoreButton {
-  height: 100%;
-  width: 100%;
+.StocksPage-EvaluatingDialog-div {
+  width: 500px;
 }

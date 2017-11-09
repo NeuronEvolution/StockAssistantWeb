@@ -36,17 +36,18 @@
 }
 
 .IndexManagePage-Mine-ListItem-Name{
-    width: 10%;
+    padding-left: 10%;
+    width: 30%;
     text-align: left;
 }
 
 .IndexManagePage-Mine-ListItem-EvalWeight{
-    width: 10%;
+    width: 15%;
     text-align: left;
 }
 
 .IndexManagePage-Mine-ListItem-NIWeight {
-    width: 10%;
+    width: 15%;
     text-align: left;
 }
 
@@ -99,13 +100,14 @@
 
 }
 .IndexManagePage-AI-ListItem-Name{
+    padding-left: 10%;
     width: 20%;
     text-align: left;
 }
 
 .IndexManagePage-AI-ListItem-UsedCount{
     width: 20%;
-    text-align: left;
+    text-align: center;
 }
 
 .IndexManagePage-AI-ListItem-Use-button{

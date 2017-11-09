@@ -1,0 +1,36 @@
+.NotEvaluatedList-StockCode {
+    width: 25%;
+    text-align: left;
+}
+
+.NotEvaluatedList-StockName {
+    width: 25%;
+    text-align: left;
+}
+
+.NotEvaluatedList-IndustryName {
+    width: 25%;
+    text-align: left;
+}
+
+.NotEvaluatedList-EvaluateButtonDiv {
+    height: 100%;
+    width: 10%;
+    float: right;
+}
+
+.NotEvaluatedList-EvaluateButton {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
+.NotEvaluatedList-More {
+    height: 100%;
+    width: 100%;
+}
+
+.NotEvaluatedList-MoreButton {
+    height: 100%;
+    width: 100%;
+}

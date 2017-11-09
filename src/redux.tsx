@@ -1,7 +1,7 @@
 import {AnyAction, combineReducers} from 'redux'
 import {Props as AppProps} from "./App";
 import {
-    DefaultApiFactory, StockIndexAdvice, UserStockEvaluate,
+    DefaultApiFactory, StockIndexAdvice, UserIndexEvaluate, UserStockEvaluate,
     UserStockIndex
 } from "./apis/StockAssistant/gen/api";
 import {isUndefined} from "util";
@@ -15,6 +15,7 @@ export interface RootState {
     notEvaluatedList: Array<UserStockEvaluate>
     userStockIndexList: Array<UserStockIndex>
     stockIndexAdviceList:Array<StockIndexAdvice>
+    userIndexEvaluateListMap: Map<string, Array<UserIndexEvaluate>>
 }
 
 export interface Session{
@@ -114,6 +115,57 @@ export function apiNotEvaluatedList(userId:string) {
             dispatch({type: NOT_EVALUATED_LIST_SUCCESS, payload: userStockEvaluateList})
         }).catch((response) => {
             responseError(dispatch, NOT_EVALUATED_LIST_FAILURE, response)
+        })
+    }
+}
+
+export const USER_INDEX_EVALUATE_LIST_REQUEST='USER_INDEX_EVALUATE_LIST_REQUEST'
+export const USER_INDEX_EVALUATE_LIST_SUCCESS='USER_INDEX_EVALUATE_LIST_SUCCESS'
+export const USER_INDEX_EVALUATE_LIST_FAILURE='USER_INDEX_EVALUATE_LIST_FAILURE'
+export function apiUserIndexEvaluateList(userId:string,stockId:string) {
+    return function (dispatch: any, getState: any) {
+        dispatch({type: USER_INDEX_EVALUATE_LIST_REQUEST});
+        return stockAssistantApi.userIndexEvaluateList({
+            userId: userId,
+            stockId: stockId
+        }).then((userIndexEvaluateList) => {
+            dispatch({
+                type: USER_INDEX_EVALUATE_LIST_SUCCESS,
+                payload: {
+                    data: userIndexEvaluateList,
+                    userId: userId,
+                    stockId: stockId
+                }
+            })
+        }).catch((response) => {
+            responseError(dispatch, USER_INDEX_EVALUATE_LIST_FAILURE, response)
+        })
+    }
+}
+
+export const USER_INDEX_EVALUATE_SAVE_REQUEST='USER_INDEX_EVALUATE_SAVE_REQUEST'
+export const USER_INDEX_EVALUATE_SAVE_SUCCESS='USER_INDEX_EVALUATE_SAVE_SUCCESS'
+export const USER_INDEX_EVALUATE_SAVE_FAILURE='USER_INDEX_EVALUATE_SAVE_FAILURE'
+export function apiUserIndexEvaluateSave(userId:string,stockId:string,indexName:string,evalStars:number) {
+    return function (dispatch: any, getState: any) {
+        dispatch({type: USER_INDEX_EVALUATE_SAVE_REQUEST});
+        return stockAssistantApi.userIndexEvaluateSave({
+            userId: userId,
+            stockId: stockId,
+            indexEvaluate: {
+                indexName: indexName,
+                evalStars: evalStars
+            }
+        }).then((userIndexEvaluate) => {
+            dispatch({
+                type: USER_INDEX_EVALUATE_SAVE_SUCCESS,
+                payload: {
+                    data: userIndexEvaluate
+                }
+            })
+            dispatch(apiUserIndexEvaluateList(userId, stockId))//refresh
+        }).catch((response) => {
+            responseError(dispatch, USER_INDEX_EVALUATE_SAVE_FAILURE, response)
         })
     }
 }
@@ -293,18 +345,14 @@ function appStateReducer(state:AppProps,action:AnyAction) {
 
 function loginReducer(session:Session,action:AnyAction) {
     if (isUndefined(session)) {
-        return {}
+        return null
     }
 
     switch (action.type) {
-        case USER_LOGIN_REQUEST:
-            return session;
         case USER_LOGIN_SUCCESS:
             return {
                 jwt:action.payload.jwt,
             }
-        case USER_LOGIN_FAILURE:
-            return session;
         default:
             return session;
     }
@@ -320,16 +368,12 @@ function userReducer(user:User,action:AnyAction){
 
 function stockEvaluateListReducer(stockEvaluateList:Array<UserStockEvaluate>,action:AnyAction) {
     if (isUndefined(stockEvaluateList)) {
-        return []
+        return null
     }
 
     switch (action.type) {
-        case STOCK_EVALUATE_LIST_REQUEST:
-            return stockEvaluateList;
         case STOCK_EVALUATE_LIST_SUCCESS:
             return action.payload;
-        case STOCK_EVALUATE_LIST_FAILURE:
-            return stockEvaluateList;
         default:
             return stockEvaluateList;
     }
@@ -337,24 +381,39 @@ function stockEvaluateListReducer(stockEvaluateList:Array<UserStockEvaluate>,act
 
 function notEvaluatedListReducer(notEvaluatedList:Array<UserStockEvaluate>,action:AnyAction) {
     if (isUndefined(notEvaluatedList)) {
-        return []
+        return null
     }
 
     switch (action.type) {
-        case NOT_EVALUATED_LIST_REQUEST:
-            return notEvaluatedList;
         case NOT_EVALUATED_LIST_SUCCESS:
             return action.payload;
-        case NOT_EVALUATED_LIST_FAILURE:
-            return notEvaluatedList;
         default:
             return notEvaluatedList;
     }
 }
 
+function userIndexEvaluateListReducer(userIndexEvaluateListMap:Map<string,Array<UserIndexEvaluate>>,action:AnyAction) {
+    if (isUndefined(userIndexEvaluateListMap)) {
+        return new Map<string, Array<UserIndexEvaluate>>()
+    }
+
+    switch (action.type) {
+        case USER_INDEX_EVALUATE_LIST_SUCCESS: {
+            let newMap=new Map<string,Array<UserIndexEvaluate>>()
+            userIndexEvaluateListMap.forEach((value:any,key:any,map:any)=>{
+                newMap.set(key,value)
+            })
+            newMap.set(action.payload.stockId, action.payload.data)
+            return newMap;
+        }
+        default :
+            return userIndexEvaluateListMap;
+    }
+}
+
 function userStockIndexListReducer(list:Array<UserStockIndex>, action:AnyAction) {
     if (isUndefined(list)) {
-        return []
+        return null
     }
 
     switch (action.type) {
@@ -367,7 +426,7 @@ function userStockIndexListReducer(list:Array<UserStockIndex>, action:AnyAction)
 
 function stockIndexAdviceListReducer(list:Array<StockIndexAdvice>, action:AnyAction) {
     if (isUndefined(list)) {
-        return []
+        return null
     }
 
     switch (action.type) {
@@ -386,5 +445,6 @@ export const rootReducer=combineReducers({
     stockEvaluateList:stockEvaluateListReducer,
     notEvaluatedList:notEvaluatedListReducer,
     userStockIndexList:userStockIndexListReducer,
-    stockIndexAdviceList:stockIndexAdviceListReducer
+    stockIndexAdviceList:stockIndexAdviceListReducer,
+    userIndexEvaluateListMap:userIndexEvaluateListReducer,
 });
