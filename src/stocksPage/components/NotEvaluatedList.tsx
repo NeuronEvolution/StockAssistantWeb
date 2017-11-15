@@ -25,16 +25,9 @@ export default class NotEvaluatedList extends React.Component<Props,State> {
             <ListItem key={e.stockId} button={true} divider={true} onClick={() => {
                 this.props.openEvaluateDialog(stockId)
             }}>
-                <label className="NotEvaluatedList-StockCode">
-                    {e.stockCode}
-                </label>
-                <label className="NotEvaluatedList-StockName">
-                    {e.stockNameCN}
-                </label>
-                <label
-                    className="NotEvaluatedList-IndustryName">
-                    {e.industryName}
-                </label>
+                <label className="NotEvaluatedList-StockCode">{e.stockCode}</label>
+                <label className="NotEvaluatedList-StockName">{e.stockNameCN}</label>
+                <label className="NotEvaluatedList-IndustryName">{e.industryName}</label>
                 <div className="NotEvaluatedList-EvaluateButtonDiv">
                     <Button className="NotEvaluatedList-EvaluateButton" onClick={() => {
                         this.props.openEvaluateDialog(stockId)

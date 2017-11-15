@@ -102,7 +102,7 @@ class App extends React.Component<Props,State> {
                 <div className="App-Inner">
                     <div className="App-LeftPanel">
                         <div className="App-LeftPanel-Header">
-                            <span className="App-LeftPanel-Header-Name"> <label>巴菲特</label></span>
+                            <span className="App-LeftPanel-Header-Name"> <label>Buffett</label></span>
                         </div>
                         <div className="App-LeftPanel-Divider"/>
                         <List>

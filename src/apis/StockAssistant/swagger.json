@@ -558,11 +558,41 @@
         }
       }
     },
+    "/stocks/{stockId}":{
+      "get": {
+        "summary": "get stock",
+        "operationId": "StockGet",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/Stock"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    },
     "/stockIndexAdvices": {
       "get": {
         "summary": "list",
         "operationId": "StockIndexAdviceList",
         "parameters": [
+          {
+            "in": "query",
+            "name": "userId",
+            "type": "string"
+          },
           {
             "in": "query",
             "name": "pageToken",
@@ -598,8 +628,75 @@
     }
   },
   "definitions": {
+    "StockUrl":{
+      "description": "stock url",
+      "type": "object",
+      "properties": {
+        "name":{
+          "description": "name",
+          "type": "string"
+        },
+        "icon":{
+          "description": "icon",
+          "type": "string"
+        },
+        "url":{
+          "description": "url",
+          "type": "string"
+        }
+      }
+    },
+    "Stock":{
+      "description": "stock",
+      "type": "object",
+      "properties": {
+        "stockId": {
+          "description": "Stock id",
+          "type": "string"
+        },
+        "exchangeId": {
+          "description": "Exchange id",
+          "type": "string"
+        },
+        "stockCode":{
+          "description": "Stock code",
+          "type":"string"
+        },
+        "stockNameCN":{
+          "description": "Stock name cn",
+          "type": "string"
+        },
+        "launchDate":{
+          "description": "Launch date",
+          "type": "string",
+          "format": "date-time"
+        },
+        "websiteUrl":{
+          "description": "Website url",
+          "type": "string"
+        },
+        "industryName":{
+          "description": "Industry name",
+          "type": "string"
+        },
+        "cityNameCN":{
+          "description": "City name cn",
+          "type": "string"
+        },
+        "provinceNameCN":{
+          "description": "Province name cn",
+          "type": "string"
+        },
+        "stockUrlList":{
+          "description": "url list",
+          "type": "array",
+          "items": {
+            "$ref":"#/definitions/StockUrl"
+          }
+        }
+      }
+    },
     "UserSetting": {
-      "id": "Setting",
       "description": "User stock setting",
       "type": "object",
       "properties": {
@@ -614,7 +711,6 @@
       }
     },
     "UserStockIndex": {
-      "id": "Index",
       "description": "User stock index",
       "type": "object",
       "properties": {
@@ -639,7 +735,6 @@
       }
     },
     "UserStockEvaluate": {
-      "id": "StockEvaluate",
       "description": "stock evaluate",
       "type": "object",
       "properties": {
@@ -651,6 +746,11 @@
           "description": "score",
           "type": "number",
           "format": "double"
+        },
+        "indexCount":{
+          "description": "index count",
+          "type": "integer",
+          "format": "int32"
         },
         "evalRemark": {
           "description": "remark",
@@ -677,26 +777,13 @@
           "type": "string",
           "format": "date-time"
         },
-        "websiteUrl": {
-          "description": "Website url",
-          "type": "string"
-        },
         "industryName": {
           "description": "Industry name",
-          "type": "string"
-        },
-        "cityNameCN": {
-          "description": "City name cn",
-          "type": "string"
-        },
-        "provinceNameCN": {
-          "description": "Province name cn",
           "type": "string"
         }
       }
     },
     "UserIndexEvaluate": {
-      "id": "IndexEvaluate",
       "description": "index evaluate",
       "type": "object",
       "properties": {
@@ -721,7 +808,6 @@
       }
     },
     "StockIndexAdvice": {
-      "id": "StockIndex",
       "description": "stock index",
       "type": "object",
       "properties": {
@@ -733,6 +819,10 @@
           "description": "used count",
           "type": "integer",
           "format": "int64"
+        },
+        "haveUsed":{
+          "description": "i have used",
+          "type": "boolean"
         }
       }
     }

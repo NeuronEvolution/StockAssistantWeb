@@ -1,7 +1,7 @@
 import {AnyAction, combineReducers} from 'redux'
 import {Props as AppProps} from "./App";
 import {
-    DefaultApiFactory, StockIndexAdvice, UserIndexEvaluate, UserStockEvaluate,
+    DefaultApiFactory, Stock, StockIndexAdvice, UserIndexEvaluate, UserStockEvaluate,
     UserStockIndex
 } from "./apis/StockAssistant/gen/api";
 import {isUndefined} from "util";
@@ -11,6 +11,7 @@ export interface RootState {
     errorMessage: string|null
     session: Session
     user: User
+    stockMap:Map<string,Stock>
     stockEvaluateList: Array<UserStockEvaluate>
     notEvaluatedList: Array<UserStockEvaluate>
     userStockIndexList: Array<UserStockIndex>
@@ -278,17 +279,33 @@ export function apiUserStockIndexRename(userId:string,nameOld: string,nameNew :s
 export const STOCK_INDEX_ADVICE_LIST_REQUEST='STOCK_INDEX_ADVICE_REQUEST';
 export const STOCK_INDEX_ADVICE_LIST_SUCCESS='STOCK_INDEX_ADVICE_SUCCESS';
 export const STOCK_INDEX_ADVICE_LIST_FAILURE='STOCK_INDEX_ADVICE_FAILURE';
-export function apiStockIndexAdviceList(pageToken:string,pageSize:number) {
-    console.log("apiStockIndexAdvice")
+export function apiStockIndexAdviceList(userId:string,pageToken:string,pageSize:number) {
     return function (dispatch: any, getState: any) {
         dispatch({type: STOCK_INDEX_ADVICE_LIST_REQUEST})
         return stockAssistantApi.stockIndexAdviceList({
-            pageToken:pageToken,
-            pageSize:pageSize
+            userId: userId,
+            pageToken: pageToken,
+            pageSize: pageSize
         }).then((stockIndexAdviceList) => {
             dispatch({type: STOCK_INDEX_ADVICE_LIST_SUCCESS, payload: stockIndexAdviceList})
         }).catch((response) => {
             responseError(dispatch, STOCK_INDEX_ADVICE_LIST_FAILURE, response)
+        })
+    }
+}
+
+export const STOCK_GET_REQUEST='STOCK_GET_REQUEST';
+export const STOCK_GET_SUCCESS='STOCK_GET_SUCCESS';
+export const STOCK_GET_FAILURE='STOCK_GET_FAILURE';
+export function apiStockGet(stockId:string) {
+    return function (dispatch: any, getState: any) {
+        dispatch({type: STOCK_GET_REQUEST})
+        return stockAssistantApi.stockGet({
+            stockId: stockId
+        }).then((stock: Stock) => {
+            dispatch({type: STOCK_GET_SUCCESS, payload: {data: stock}})
+        }).catch((response) => {
+            responseError(dispatch, STOCK_GET_FAILURE, response)
         })
     }
 }
@@ -437,6 +454,25 @@ function stockIndexAdviceListReducer(list:Array<StockIndexAdvice>, action:AnyAct
     }
 }
 
+function stockMapReducer(stockMap:Map<string,Stock>,action:AnyAction){
+    if(isUndefined(stockMap)){
+        return new Map<string,Stock>()
+    }
+
+    switch (action.type){
+        case STOCK_GET_SUCCESS:{
+            let newMap=new Map<string,Stock>()
+            stockMap.forEach((value:any,key:any,map:any)=>{
+                newMap.set(key,value)
+            })
+            newMap.set(action.payload.data.stockId, action.payload.data)
+            return newMap;
+        }
+        default:
+            return stockMap
+    }
+}
+
 export const rootReducer=combineReducers({
     errorMessage:errorMessageReducer,
     appProps:appStateReducer,
@@ -447,4 +483,5 @@ export const rootReducer=combineReducers({
     userStockIndexList:userStockIndexListReducer,
     stockIndexAdviceList:stockIndexAdviceListReducer,
     userIndexEvaluateListMap:userIndexEvaluateListReducer,
+    stockMap:stockMapReducer
 });

@@ -2,24 +2,34 @@ import * as React from 'react'
 import List,{ ListItem } from 'material-ui/List';
 import {UserStockEvaluate} from "../../apis/StockAssistant/gen/api";
 import Button from 'material-ui/Button'
-import './EvaluatedList.css'
+import {isUndefined} from "util";
 
 export interface Props {
+    indexCount:number
     evaluatedList:Array<UserStockEvaluate>
+    openEvaluateDialog:(stockId:string)=>void
 }
 
 interface State{
-
 }
 
 export default class EvaluatedList extends React.Component<Props,State> {
     renderItem(e: UserStockEvaluate) {
+        if (isUndefined(e.stockId)) {
+            return null
+        }
+
+        let stockId = e.stockId ? e.stockId : ""
+
         return (
-            <ListItem key={e.stockId} button={true} divider={true}>
-                <label className="EvaluatedList-StockCode">{e.stockCode}</label>
-                <label className="EvaluatedList-StockName">{e.stockNameCN}</label>
-                <label className="EvaluatedList-IndustryName">{e.industryName}</label>
-                <label className="EvaluatedList-TotalScore">{e.totalScore}</label>
+            <ListItem key={e.stockId} button={true} divider={true} onClick={() => {
+                this.props.openEvaluateDialog(stockId)
+            }}>
+                <label style={{width: '20%', textAlign: 'left'}}>{e.stockCode}</label>
+                <label style={{width: '20%', textAlign: 'left'}}>{e.stockNameCN}</label>
+                <label style={{width: '20%', textAlign: 'left'}}>{e.industryName}</label>
+                <label style={{width: '20%', textAlign: 'left'}}>{e.totalScore}</label>
+                <label style={{width: '10%', textAlign: 'left'}}>{e.indexCount}/{this.props.indexCount}</label>
             </ListItem>
         )
     }
@@ -29,8 +39,8 @@ export default class EvaluatedList extends React.Component<Props,State> {
             <List>
                 {this.props.evaluatedList &&
                 this.props.evaluatedList.map(this.renderItem.bind(this))}
-                <ListItem className="EvaluatedList-More">
-                    <Button className="EvaluatedList-MoreButton">
+                <ListItem style={{width: '100%', height: '100%'}}>
+                    <Button style={{width: '100%', height: '100%'}}>
                         更多
                     </Button>
                 </ListItem>
