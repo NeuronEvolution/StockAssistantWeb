@@ -21,7 +21,7 @@ export default class EvaluatedList extends React.Component<Props> {
         let stockId = e.stockId ? e.stockId : "";
 
         return (
-            <ListItem key={e.stockId} button={true} divider={true} onClick={() => {
+            <ListItem key={e.stockId} button={true} divider={true} style={{height:"20px"}} onClick={() => {
                 this.props.openEvaluateDialog(stockId)
             }}>
                 <label style={{width: '20%', textAlign: 'left'}}>{e.stockCode}</label>

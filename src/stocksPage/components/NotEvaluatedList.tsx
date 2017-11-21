@@ -19,7 +19,7 @@ export default class NotEvaluatedList extends React.Component<Props> {
         let stockId = e.stockId ? e.stockId : "";
 
         return (
-            <ListItem key={e.stockId} button={true} divider={true} onClick={() => {
+            <ListItem key={e.stockId} button={true} divider={true} style={{height:"20px"}} onClick={() => {
                 this.props.openEvaluateDialog(stockId)
             }}>
                 <label style={{width: "25%", textAlign: "left"}}>{e.stockCode}</label>

@@ -331,6 +331,13 @@ export function onAppTabItemClick(actionType:string) {
     }
 }
 
+export const RESET_USER_STOCK_EVALUATE_LIST="RESET_USER_STOCK_EVALUATE_LIST"
+export function onResetUserStockEvaluateList(){
+    return{
+        type:RESET_USER_STOCK_EVALUATE_LIST
+    }
+}
+
 //------------------------- reducers
 function errorMessageReducer(errorMessage:string|null,action:AnyAction):string|null {
     if(isUndefined(errorMessage)){
@@ -390,20 +397,24 @@ function userReducer(user:User,action:AnyAction){
 }
 
 function userStockEvaluatedListStateReducer(state:UserStockEvaluatedListState,action:AnyAction) {
+    const defaultState:UserStockEvaluatedListState={
+        items: [],
+        pageToken: "",
+        nextPageToken: "",
+        isFetching: false
+    };
+
     if (isUndefined(state)) {
-        return state = {
-            items: [],
-            pageToken: "",
-            nextPageToken: "",
-            isFetching: false
-        }
+        return defaultState
     }
 
     switch (action.type) {
+        case RESET_USER_STOCK_EVALUATE_LIST:
+            return defaultState;
         case USER_STOCK_EVALUATED_LIST_REQUEST:
             return {...state, isFetching: true};
         case USER_STOCK_EVALUATED_LIST_SUCCESS:
-            let oldItems = state.items
+            let oldItems = state.items;
             state = {
                 items: oldItems,
                 pageToken: action.payload.params.pageToken,

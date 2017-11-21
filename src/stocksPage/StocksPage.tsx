@@ -5,16 +5,16 @@ import {Stock, UserIndexEvaluate, UserStockIndex} from "../apis/StockAssistant/g
 import Tabs, { Tab } from 'material-ui/Tabs';
 import {
     apiUserStockIndexList,  apiUserStockEvaluateList, apiUserIndexEvaluateList,
-    apiUserIndexEvaluateSave, apiStockGet, RootState, User, UserStockEvaluatedListState
+    apiUserIndexEvaluateSave, apiStockGet, RootState, User, UserStockEvaluatedListState, onResetUserStockEvaluateList
 } from "../redux";
 import {connect} from "react-redux";
 import EvaluatedList from "./components/EvaluatedList";
 import NotEvaluatedList from "./components/NotEvaluatedList";
 import EvaluatingDialog from "./components/EvaluatingDialog";
 
-const TAB_INDEX_EVALUATED=0
-const TAB_INDEX_NOT_EVALUATED=1
-const TAB_INDEX_AI_EVALUATE=2
+const TAB_INDEX_EVALUATED=0;
+const TAB_INDEX_NOT_EVALUATED=1;
+const TAB_INDEX_AI_EVALUATE=2;
 
 interface Props {
     user: User
@@ -28,6 +28,7 @@ interface Props {
     apiUserIndexEvaluateList: (userId: string, stockId: string) => any,
     apiUserIndexEvaluateSave: (userId: string, stockId: string, indexName: string, evalStars: number) => any
     apiStockGet: (stockId: string) => any
+    onResetUserStockEvaluateList:()=>any
 }
 
 interface State {
@@ -38,9 +39,9 @@ interface State {
 
 class StocksPage extends React.Component<Props,State> {
     componentWillMount() {
-        this.setState({controlTabIndex: 0, evaluating: false})
+        this.setState({controlTabIndex: 0, evaluating: false});
 
-        this.props.apiUserStockEvaluateList({userId: this.props.user.id, pageToken: "", pageSize: 40})
+        this.props.apiUserStockEvaluateList({userId: this.props.user.id, pageToken: "", pageSize: 40});
         this.props.apiUserStockIndexList(this.props.user.id)
     }
 
@@ -56,7 +57,7 @@ class StocksPage extends React.Component<Props,State> {
     openEvaluateDialog(stockId: string): void {
         this.setState({evaluating: true, evaluatingStockId: stockId});
 
-        this.props.apiUserIndexEvaluateList(this.props.user.id,stockId)
+        this.props.apiUserIndexEvaluateList(this.props.user.id,stockId);
 
         this.props.apiStockGet(stockId)
     }
@@ -70,10 +71,10 @@ class StocksPage extends React.Component<Props,State> {
 
         switch (this.state.controlTabIndex) {
             case TAB_INDEX_EVALUATED:
-                this.refreshStockEvaluateList()
+                this.refreshStockEvaluateList();
                 break;
             case TAB_INDEX_NOT_EVALUATED:
-                this.refreshStockEvaluateList(true)
+                this.refreshStockEvaluateList(true);
                 break;
             case TAB_INDEX_AI_EVALUATE:
                 break;
@@ -83,9 +84,9 @@ class StocksPage extends React.Component<Props,State> {
     }
 
     render() {
-        console.log(this.props.userStockIndexList)
-        let userIndexEvaluateList = this.props.userIndexEvaluateListMap.get(this.state.evaluatingStockId)
-        let stock = this.props.stockMap.get(this.state.evaluatingStockId)
+        console.log(this.props.userStockIndexList);
+        let userIndexEvaluateList = this.props.userIndexEvaluateListMap.get(this.state.evaluatingStockId);
+        let stock = this.props.stockMap.get(this.state.evaluatingStockId);
         return (
             <div className="StocksPage">
                 <Tabs className="StocksPage-ControlTab" value={this.state.controlTabIndex}
@@ -93,10 +94,12 @@ class StocksPage extends React.Component<Props,State> {
                           this.setState({controlTabIndex: v});
                           switch (v) {
                               case TAB_INDEX_EVALUATED:
-                                  this.refreshStockEvaluateList()
+                                  this.props.onResetUserStockEvaluateList();
+                                  this.refreshStockEvaluateList();
                                   break;
                               case TAB_INDEX_NOT_EVALUATED:
-                                  this.refreshStockEvaluateList(true)
+                                  this.props.onResetUserStockEvaluateList();
+                                  this.refreshStockEvaluateList(true);
                                   break;
                               case TAB_INDEX_AI_EVALUATE:
                                   break;
@@ -184,4 +187,5 @@ export default connect(selectProps,{
     apiUserIndexEvaluateList,
     apiUserIndexEvaluateSave,
     apiStockGet,
+    onResetUserStockEvaluateList,
 })(StocksPage)
