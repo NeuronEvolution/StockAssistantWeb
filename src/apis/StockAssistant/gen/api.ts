@@ -230,6 +230,11 @@ export interface UserStockEvaluate {
     "industryName"?: string;
 }
 
+export interface UserStockEvaluateListResponse {
+    "items"?: Array<UserStockEvaluate>;
+    "nextPageToken"?: string;
+}
+
 /**
  * User stock index
  */
@@ -569,7 +574,7 @@ export const DefaultApiFetchParamCreator = {
      * @param sort sort
      * @param notEvaluated not evaluated
      */
-    userStockEvaluateList(params: {  "userId": string; "pageToken"?: string; "pageSize"?: number; "sort"?: string; "notEvaluated"?: string; }, options?: any): FetchArgs {
+    userStockEvaluateList(params: {  "userId": string; "pageToken"?: string; "pageSize"?: number; "sort"?: string; "notEvaluated"?: boolean; }, options?: any): FetchArgs {
         // verify required parameter "userId" is set
         if (params["userId"] == null) {
             throw new Error("Missing required parameter userId when calling userStockEvaluateList");
@@ -984,7 +989,7 @@ export const DefaultApiFp = {
      * @param sort sort
      * @param notEvaluated not evaluated
      */
-    userStockEvaluateList(params: { "userId": string; "pageToken"?: string; "pageSize"?: number; "sort"?: string; "notEvaluated"?: string;  }, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<UserStockEvaluate>> {
+    userStockEvaluateList(params: { "userId": string; "pageToken"?: string; "pageSize"?: number; "sort"?: string; "notEvaluated"?: boolean;  }, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<UserStockEvaluateListResponse> {
         const fetchArgs = DefaultApiFetchParamCreator.userStockEvaluateList(params, options);
         return (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
             return fetch(basePath + fetchArgs.url, fetchArgs.options).then((response) => {
@@ -1211,7 +1216,7 @@ export class DefaultApi extends BaseAPI {
      * @param sort sort
      * @param notEvaluated not evaluated
      */
-    userStockEvaluateList(params: {  "userId": string; "pageToken"?: string; "pageSize"?: number; "sort"?: string; "notEvaluated"?: string; }, options?: any) {
+    userStockEvaluateList(params: {  "userId": string; "pageToken"?: string; "pageSize"?: number; "sort"?: string; "notEvaluated"?: boolean; }, options?: any) {
         return DefaultApiFp.userStockEvaluateList(params, options)(this.fetch, this.basePath);
     }
     /**
@@ -1376,7 +1381,7 @@ export const DefaultApiFactory = function (fetch?: FetchAPI, basePath?: string) 
          * @param sort sort
          * @param notEvaluated not evaluated
          */
-        userStockEvaluateList(params: {  "userId": string; "pageToken"?: string; "pageSize"?: number; "sort"?: string; "notEvaluated"?: string; }, options?: any) {
+        userStockEvaluateList(params: {  "userId": string; "pageToken"?: string; "pageSize"?: number; "sort"?: string; "notEvaluated"?: boolean; }, options?: any) {
             return DefaultApiFp.userStockEvaluateList(params, options)(fetch, basePath);
         },
         /**

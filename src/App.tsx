@@ -52,9 +52,9 @@ class App extends React.Component<Props,State> {
 
     }
 
-    renderErrorMessage(){
+    renderErrorMessage() {
         return (
-            <Dialog open={this.props.rootState.errorMessage!=null}>
+            <Dialog open={this.props.rootState.errorMessage != null}>
                 <DialogTitle>发生了错误</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -62,7 +62,9 @@ class App extends React.Component<Props,State> {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={()=>{this.props.errorMessage(null)}} color="primary" autoFocus>
+                    <Button onClick={() => {
+                        this.props.errorMessage(null)
+                    }} color="primary" autoFocus>
                         我知道了
                     </Button>
                 </DialogActions>
@@ -99,55 +101,55 @@ class App extends React.Component<Props,State> {
 
         return (
             <div className="App">
-                <div className="App-Inner">
-                    <div className="App-LeftPanel">
-                        <div className="App-LeftPanel-Header">
-                            <span className="App-LeftPanel-Header-Name"> <label>Buffett</label></span>
+                {
+                    !this.props.rootState.session || !this.props.rootState.session.jwt ?
+                        <div className="App-LoginPage-Container">
+                            <LoginPage apiUserLogin={this.props.apiUserLogin}/>
+                        </div> :
+                        <div className="App-Inner">
+                            <div className="App-LeftPanel">
+                                <div className="App-LeftPanel-Header">
+                                    <span className="App-LeftPanel-Header-Name"> <label>Buffett</label></span>
+                                </div>
+                                <div className="App-LeftPanel-Divider"/>
+                                <List>
+                                    <ListItem key={"stocks"} button={true} divider={true} onClick={() => {
+                                        this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_STOCKS)
+                                        this.setState({currentPageName: STOCKS_PAGE_NAME})
+                                    }}>
+                                        <label className="App-LeftPanel-Menu-Item-Text">股票</label>
+                                    </ListItem>
+                                    <ListItem key={"indexManage"} button={true} divider={true} onClick={() => {
+                                        this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_INDEX_MANAGE)
+                                        this.setState({currentPageName: INDEX_MANAGE_PAGE_NAME})
+                                    }}>
+                                        <label className="App-LeftPanel-Menu-Item-Text">指标</label>
+                                    </ListItem>
+                                    <ListItem key={"messages"} button={true} divider={true} onClick={() => {
+                                        this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_MESSAGES)
+                                        this.setState({currentPageName: MESSAGES_PAGE_NAME})
+                                    }}>
+                                        <label className="App-LeftPanel-Menu-Item-Text">消息</label>
+                                    </ListItem>
+                                    <ListItem key={"settings"} button={true} divider={true} onClick={() => {
+                                        this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_SETTINGS)
+                                        this.setState({currentPageName: SETTINGS_PAGE_NAME})
+                                    }}>
+                                        <label className="App-LeftPanel-Menu-Item-Text">设置</label>
+                                    </ListItem>
+                                    <ListItem key={"my"} button={true} divider={true} onClick={() => {
+                                        this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_MY)
+                                        this.setState({currentPageName: MY_PAGE_NAME})
+                                    }}>
+                                        <label className="App-LeftPanel-Menu-Item-Text">我的</label>
+                                    </ListItem>
+                                </List>
+                            </div>
+                            <div className="App-Content">
+                                {content}
+                            </div>
                         </div>
-                        <div className="App-LeftPanel-Divider"/>
-                        <List>
-                            <ListItem key={"stocks"} button={true} divider={true} onClick={() => {
-                                this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_STOCKS)
-                                this.setState({currentPageName: STOCKS_PAGE_NAME})
-                            }}>
-                                <label className="App-LeftPanel-Menu-Item-Text">股票</label>
-                            </ListItem>
-                            <ListItem key={"indexManage"} button={true} divider={true} onClick={() => {
-                                this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_INDEX_MANAGE)
-                                this.setState({currentPageName: INDEX_MANAGE_PAGE_NAME})
-                            }}>
-                                <label className="App-LeftPanel-Menu-Item-Text">指标</label>
-                            </ListItem>
-                            <ListItem key={"messages"} button={true} divider={true} onClick={() => {
-                                this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_MESSAGES)
-                                this.setState({currentPageName: MESSAGES_PAGE_NAME})
-                            }}>
-                                <label className="App-LeftPanel-Menu-Item-Text">消息</label>
-                            </ListItem>
-                            <ListItem key={"settings"} button={true} divider={true} onClick={() => {
-                                this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_SETTINGS)
-                                this.setState({currentPageName: SETTINGS_PAGE_NAME})
-                            }}>
-                                <label className="App-LeftPanel-Menu-Item-Text">设置</label>
-                            </ListItem>
-                            <ListItem key={"my"} button={true} divider={true} onClick={() => {
-                                this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_MY)
-                                this.setState({currentPageName: MY_PAGE_NAME})
-                            }}>
-                                <label className="App-LeftPanel-Menu-Item-Text">我的</label>
-                            </ListItem>
-                        </List>
-                    </div>
-                    <div className="App-Content">
-                        {content}
-                    </div>
-                    {
-                        !this.props.rootState.session || !this.props.rootState.session.jwt ?
-                            <div className="App-LoginPage-Container">
-                                <LoginPage apiUserLogin={this.props.apiUserLogin}/>
-                            </div> : null
-                    }
-                </div>
+                }
                 {this.renderErrorMessage()}
             </div>
         );

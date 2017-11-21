@@ -287,23 +287,15 @@
             "in": "query",
             "name": "notEvaluated",
             "description": "not evaluated",
-            "type": "string",
+            "type": "boolean",
             "required": false
           }
         ],
         "responses": {
           "200": {
             "description": "ok",
-            "headers": {
-              "Neuron-X-NextPageToken":{
-                "type": "string"
-              }
-            },
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/UserStockEvaluate"
-              }
+              "$ref": "#/definitions/UserStockEvaluateListResponse"
             }
           },
           "default": {
@@ -558,7 +550,7 @@
         }
       }
     },
-    "/stocks/{stockId}":{
+    "/stocks/{stockId}": {
       "get": {
         "summary": "get stock",
         "operationId": "StockGet",
@@ -609,7 +601,7 @@
           "200": {
             "description": "ok",
             "headers": {
-              "Neuron-X-NextPageToken":{
+              "Neuron-X-NextPageToken": {
                 "type": "string"
               }
             },
@@ -779,6 +771,20 @@
         },
         "industryName": {
           "description": "Industry name",
+          "type": "string"
+        }
+      }
+    },
+    "UserStockEvaluateListResponse":{
+      "type": "object",
+      "properties": {
+        "items":{
+          "type": "array",
+          "items": {
+            "$ref":"#/definitions/UserStockEvaluate"
+          }
+        },
+        "nextPageToken":{
           "type": "string"
         }
       }
