@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from 'react';
 import Button from 'material-ui/Button';
 
 export default class MyPage extends React.Component {
@@ -15,6 +15,6 @@ export default class MyPage extends React.Component {
                     <Button>退出当前帐号</Button>
                 </div>
             </div>
-        )
+        );
     }
 }
