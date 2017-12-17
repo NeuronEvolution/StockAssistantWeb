@@ -47,10 +47,20 @@ class App extends React.Component<Props, State> {
             tabIndex: 0,
         });
 
-        if (token === '' || refreshToken === '') {
-            // window.location.href = 'http://localhost:3004' + '?from=' + encodeURIComponent(window.location.href);
-            return;
-        }
+        window.addEventListener('message', (e: MessageEvent): void => {
+            console.log('message', e.data);
+
+            switch (e.data.type) {
+                case 'onLoginSuccess':
+                    this.setState({
+                        token: e.data.payload.token,
+                        refreshToken: e.data.payload.refreshToken
+                    });
+                    break;
+                default:
+                    return;
+            }
+        });
     }
 
     renderErrorMessage() {
@@ -80,7 +90,20 @@ class App extends React.Component<Props, State> {
     renderLoginFrame() {
         return (
             <div>
-                <iframe></iframe>
+                <iframe
+                    style={{
+                        position: 'absolute',
+                        margin: 'auto',
+                        top: '0',
+                        bottom: '0',
+                        left: '0',
+                        right: '0',
+                        width: '100%',
+                        height: '100%',
+                        border: '0px'
+                    }}
+                    src={'http://localhost:3004?fromOrigin=' + encodeURIComponent(window.location.origin)}
+                />
             </div>
         );
     }
