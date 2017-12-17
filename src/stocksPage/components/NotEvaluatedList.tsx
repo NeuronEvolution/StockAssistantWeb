@@ -1,8 +1,8 @@
 import * as React from 'react';
 import List, { ListItem } from 'material-ui/List';
-import { UserStockEvaluate } from '../../apis/StockAssistant/gen/api';
 import Button from 'material-ui/Button';
 import { UserStockEvaluatedListState } from '../../redux';
+import { UserStockEvaluate } from '../../api/StockAssistant/gen/api';
 
 export interface Props {
     state: UserStockEvaluatedListState;

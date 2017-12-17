@@ -2,28 +2,29 @@ import * as React from 'react';
 
 import List, { ListItem } from 'material-ui/List';
 import Button from 'material-ui/Button';
-import { StockIndexAdvice, UserStockIndex } from '../apis/StockAssistant/gen/api';
 import {
     apiUserStockIndexList, RootState, apiUserStockIndexAdd, apiUserStockIndexUpdate,
-    apiUserStockIndexDelete, apiUserStockIndexRename, apiStockIndexAdviceList, User, UserStockIndexListParams,
-    UserStockIndexAddParams, UserStockIndexUpdateParams, UserStockIndexDeleteParams, UserStockIndexRenameParams,
-    UserStockIndexAdviceListParams
+    apiUserStockIndexDelete, apiUserStockIndexRename, apiStockIndexAdviceList
 } from '../redux';
 import { connect } from 'react-redux';
 import IndexEditDialog from './components/IndexEditDialog';
-import { Dispatchable } from '../_common/common';
 import { isUndefined } from 'util';
+import {
+    StockIndexAdvice, StockIndexAdviceListParams, UserStockIndex, UserStockIndexAddParams, UserStockIndexDeleteParams,
+    UserStockIndexListParams, UserStockIndexRenameParams, UserStockIndexUpdateParams
+} from '../api/StockAssistant/gen/api';
+import { Dispatchable } from '../_common/action';
 
 export interface Props {
-    user: User;
     userStockIndexList: Array<UserStockIndex>;
     stockIndexAdviceList: Array<StockIndexAdvice>;
+
     apiUserStockIndexList: (p: UserStockIndexListParams) => Dispatchable;
     apiUserStockIndexAdd: (p: UserStockIndexAddParams) => Dispatchable;
     apiUserStockIndexUpdate: (p: UserStockIndexUpdateParams) => Dispatchable;
     apiUserStockIndexDelete: (p: UserStockIndexDeleteParams) => Dispatchable;
     apiUserStockIndexRename: (p: UserStockIndexRenameParams) => Dispatchable;
-    apiStockIndexAdviceList: (p: UserStockIndexAdviceListParams) => Dispatchable;
+    apiStockIndexAdviceList: (p: StockIndexAdviceListParams) => Dispatchable;
 }
 
 interface State {
@@ -31,6 +32,8 @@ interface State {
     editing: boolean;
     adding: boolean;
 }
+
+const testUid = '18616781549';
 
 class IndexManagePage extends React.Component<Props, State> {
 
@@ -41,8 +44,8 @@ class IndexManagePage extends React.Component<Props, State> {
             adding: false
         });
 
-        this.props.apiUserStockIndexList({userId: this.props.user.id});
-        this.props.apiStockIndexAdviceList({userId: this.props.user.id, pageToken: '', pageSize: 40});
+        this.props.apiUserStockIndexList({userId: testUid});
+        this.props.apiStockIndexAdviceList({userId: testUid, pageToken: '', pageSize: 40});
     }
 
     renderMyIndex(userStockIndex: UserStockIndex) {
@@ -81,7 +84,7 @@ class IndexManagePage extends React.Component<Props, State> {
                         }
 
                         this.props.apiUserStockIndexDelete({
-                            userId: this.props.user.id,
+                            userId: testUid,
                             indexName: userStockIndex.name
                         });
                     }}
@@ -107,7 +110,7 @@ class IndexManagePage extends React.Component<Props, State> {
                     disabled={stockIndexAdvice.haveUsed}
                     onClick={() => {
                         this.props.apiUserStockIndexAdd({
-                            userId: this.props.user.id,
+                            userId: testUid,
                             index: {
                                 name: stockIndexAdvice.indexName,
                                 evalWeight: 0,
@@ -163,10 +166,14 @@ class IndexManagePage extends React.Component<Props, State> {
                     onIndexSave={(adding: boolean, e: UserStockIndex, nameOld?: string) => {
                         this.setState({editing: false});
                         if (adding) {
-                            this.props.apiUserStockIndexAdd({userId: this.props.user.id, index: e});
+                            this.props.apiUserStockIndexAdd({userId: testUid, index: e});
                         } else {
                             if (e.name === nameOld) {
-                                this.props.apiUserStockIndexUpdate({userId: this.props.user.id, index: e});
+                                this.props.apiUserStockIndexUpdate({
+                                    userId: testUid,
+                                    indexName: e.name == null ? '' : e.name,
+                                    index: e
+                                });
                             } else {
                                 if (isUndefined(e.name)) {
                                     return;
@@ -177,11 +184,15 @@ class IndexManagePage extends React.Component<Props, State> {
                                 }
 
                                 this.props.apiUserStockIndexRename({
-                                    userId: this.props.user.id,
+                                    userId: testUid,
                                     nameOld: nameOld,
                                     nameNew: e.name
                                 });
-                                this.props.apiUserStockIndexUpdate({userId: this.props.user.id, index: e});
+                                this.props.apiUserStockIndexUpdate({
+                                    userId: testUid,
+                                    indexName: e.name == null ? '' : e.name,
+                                    index: e
+                                });
                             }
                         }
                     }}
@@ -193,7 +204,6 @@ class IndexManagePage extends React.Component<Props, State> {
 
 function selectProps(rootState: RootState) {
     return {
-        user: rootState.user,
         userStockIndexList: rootState.userStockIndexList,
         stockIndexAdviceList: rootState.stockIndexAdviceList
     };

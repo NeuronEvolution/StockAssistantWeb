@@ -2,13 +2,13 @@
   "swagger": "2.0",
   "info": {
     "description": "",
-    "title": "Stock Assistant",
+    "title": "Stock Assistant Private API",
     "contact": {
       "name": "mars"
     },
     "version": "v1"
   },
-  "basePath": "/api/stock-assistant/v1",
+  "basePath": "/api/v1/stock-assistant-private",
   "consumes": [
     "application/json"
   ],
@@ -444,112 +444,6 @@
         }
       }
     },
-    "/{userId}/settings": {
-      "parameters": [
-        {
-          "in": "path",
-          "name": "userId",
-          "description": "User id",
-          "type": "string",
-          "required": true
-        }
-      ],
-      "get": {
-        "summary": "list",
-        "operationId": "UserSettingList",
-        "parameters": [
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/UserSetting"
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/responses/ErrorResponse"
-          }
-        }
-      },
-      "post": {
-        "summary": "save",
-        "operationId": "UserSettingSave",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "Setting",
-            "description": "setting",
-            "schema": {
-              "$ref": "#/definitions/UserSetting"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "$ref": "#/definitions/UserSetting"
-            }
-          },
-          "default": {
-            "$ref": "#/responses/ErrorResponse"
-          }
-        }
-      }
-    },
-    "/{userId}/settings/{configKey}": {
-      "parameters": [
-        {
-          "in": "path",
-          "name": "userId",
-          "description": "User id",
-          "type": "string",
-          "required": true
-        },
-        {
-          "in": "path",
-          "name": "configKey",
-          "description": "config key",
-          "type": "string",
-          "required": true
-        }
-      ],
-      "get": {
-        "summary": "",
-        "operationId": "UserSettingGet",
-        "parameters": [
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "$ref": "#/definitions/UserSetting"
-            }
-          },
-          "default": {
-            "$ref": "#/responses/ErrorResponse"
-          }
-        }
-      },
-      "delete": {
-        "summary": "",
-        "operationId": "UserSettingDelete",
-        "parameters": [
-        ],
-        "responses": {
-          "200": {
-            "description": "ok"
-          },
-          "default": {
-            "$ref": "#/responses/ErrorResponse"
-          }
-        }
-      }
-    },
     "/stocks/{stockId}": {
       "get": {
         "summary": "get stock",
@@ -620,25 +514,25 @@
     }
   },
   "definitions": {
-    "StockUrl":{
+    "StockUrl": {
       "description": "stock url",
       "type": "object",
       "properties": {
-        "name":{
+        "name": {
           "description": "name",
           "type": "string"
         },
-        "icon":{
+        "icon": {
           "description": "icon",
           "type": "string"
         },
-        "url":{
+        "url": {
           "description": "url",
           "type": "string"
         }
       }
     },
-    "Stock":{
+    "Stock": {
       "description": "stock",
       "type": "object",
       "properties": {
@@ -650,55 +544,41 @@
           "description": "Exchange id",
           "type": "string"
         },
-        "stockCode":{
+        "stockCode": {
           "description": "Stock code",
-          "type":"string"
+          "type": "string"
         },
-        "stockNameCN":{
+        "stockNameCN": {
           "description": "Stock name cn",
           "type": "string"
         },
-        "launchDate":{
+        "launchDate": {
           "description": "Launch date",
           "type": "string",
           "format": "date-time"
         },
-        "websiteUrl":{
+        "websiteUrl": {
           "description": "Website url",
           "type": "string"
         },
-        "industryName":{
+        "industryName": {
           "description": "Industry name",
           "type": "string"
         },
-        "cityNameCN":{
+        "cityNameCN": {
           "description": "City name cn",
           "type": "string"
         },
-        "provinceNameCN":{
+        "provinceNameCN": {
           "description": "Province name cn",
           "type": "string"
         },
-        "stockUrlList":{
+        "stockUrlList": {
           "description": "url list",
           "type": "array",
           "items": {
-            "$ref":"#/definitions/StockUrl"
+            "$ref": "#/definitions/StockUrl"
           }
-        }
-      }
-    },
-    "UserSetting": {
-      "description": "User stock setting",
-      "type": "object",
-      "properties": {
-        "key": {
-          "description": "Key",
-          "type": "string"
-        },
-        "value": {
-          "description": "Value",
-          "type": "string"
         }
       }
     },
@@ -739,7 +619,7 @@
           "type": "number",
           "format": "double"
         },
-        "indexCount":{
+        "indexCount": {
           "description": "index count",
           "type": "integer",
           "format": "int32"
@@ -775,16 +655,16 @@
         }
       }
     },
-    "UserStockEvaluateListResponse":{
+    "UserStockEvaluateListResponse": {
       "type": "object",
       "properties": {
-        "items":{
+        "items": {
           "type": "array",
           "items": {
-            "$ref":"#/definitions/UserStockEvaluate"
+            "$ref": "#/definitions/UserStockEvaluate"
           }
         },
-        "nextPageToken":{
+        "nextPageToken": {
           "type": "string"
         }
       }
@@ -826,7 +706,7 @@
           "type": "integer",
           "format": "int64"
         },
-        "haveUsed":{
+        "haveUsed": {
           "description": "i have used",
           "type": "boolean"
         }

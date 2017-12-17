@@ -5,10 +5,10 @@ import Dialog, {
     DialogTitle,
 } from 'material-ui/Dialog';
 import List, { ListItem } from 'material-ui/List';
-import { Stock, StockUrl, UserIndexEvaluate } from '../../apis/StockAssistant/gen/api';
 import Radio from 'material-ui/Radio';
 import Button from 'material-ui/Button';
 import { isUndefined } from 'util';
+import { Stock, StockUrl, UserIndexEvaluate } from '../../api/StockAssistant/gen/api';
 
 export interface Props {
     stock?: Stock;

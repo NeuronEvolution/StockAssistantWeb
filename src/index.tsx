@@ -8,9 +8,7 @@ import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import { rootReducer } from './redux';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import OauthJumpPage from './oauthJumpPage/OauthJumpPage';
 import App from './App';
-import { Switch } from 'react-router';
 
 let store = createStore(rootReducer, {}, applyMiddleware(thunk, logger));
 
@@ -22,10 +20,7 @@ class Root extends React.Component {
             <Provider store={store}>
                 <MuiThemeProvider theme={theme}>
                     <BrowserRouter>
-                        <Switch>
-                            <Route path="/oauthJump" component={OauthJumpPage}/>
                             <Route path="/" component={App}/>
-                        </Switch>
                     </BrowserRouter>
                 </MuiThemeProvider>
             </Provider>

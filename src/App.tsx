@@ -1,16 +1,9 @@
 import * as React from 'react';
-import './App.css';
-import List, { ListItem } from 'material-ui/List';
 import MessagesPage from './messagesPage/MessagesPage';
 import StocksPage from './stocksPage/StocksPage';
 import SettingsPage from './settingsPage/SettingsPage';
 import MyPage from './myPage/MyPage';
 import { connect } from 'react-redux';
-import {
-    errorMessage,
-    onAppTabItemClick, APP_TAB_ITEM_CLICK_MESSAGES, APP_TAB_ITEM_CLICK_STOCKS, APP_TAB_ITEM_CLICK_SETTINGS,
-    APP_TAB_ITEM_CLICK_MY, RootState, APP_TAB_ITEM_CLICK_INDEX_MANAGE,
-} from './redux';
 import IndexManagePage from './indexManagePage/IndexManagePage';
 import Dialog, {
     DialogActions,
@@ -19,59 +12,43 @@ import Dialog, {
     DialogTitle,
 } from 'material-ui/Dialog';
 import Button from 'material-ui/Button';
-import { AnyAction } from 'redux';
+import { onErrorMessage, RootState } from './redux';
+import { StandardAction } from './_common/action';
+import { parseQueryString, valueOrDefault } from './_common/common';
+import Tabs, { Tab } from 'material-ui/Tabs';
+import { CSSProperties } from 'react';
+
+const TAB_STOCKS_PAGE = 0;
+const TAB_INDEX_MANAGE_PAGE = 1;
+const TAB_MESSAGES_PAGE = 2;
+const TAB_SETTINGS_PAGE = 3;
+const TAB_MY_PAGE = 4;
 
 export interface Props {
     rootState: RootState;
-    errorMessage: (params: { message: string }) => AnyAction;
-    onAppTabItemClick: (actionType: string) => AnyAction;
+    onErrorMessage: (params: { message: string }) => StandardAction;
 }
 
-const STOCKS_PAGE_NAME = 'STOCKS_PAGE_NAME';
-const INDEX_MANAGE_PAGE_NAME = 'INDEX_MANAGE_PAGE_NAME';
-const MESSAGES_PAGE_NAME = 'MESSAGES_PAGE_NAME';
-const SETTINGS_PAGE_NAME = 'SETTINGS_PAGE_NAME';
-const MY_PAGE_NAME = 'MY_PAGE_NAME';
-
-const AUTHORIZE_URL = 'http://localhost:3002';
-const AUTHORIZE_CLIENT_ID = '10001';
-const AUTHORIZE_STATE = 'xyz';
-const AUTHORIZE_SCOPE = 'BASIC';
-
 interface State {
-    queryParams: Map<string, string>;
-    currentPageName: string;
-    authorizedCode: string;
+    token: string;
+    refreshToken: string;
+    tabIndex: number;
 }
 
 class App extends React.Component<Props, State> {
     componentWillMount() {
-        let queryParamsMap = new Map<string, string>();
-        if (window.location.search.startsWith('?')) {
-            window.location.search.substring(1).split('&').forEach((pair) => {
-                const tokens = pair.split('=');
-                if (tokens.length > 1) {
-                    queryParamsMap.set(tokens[0], tokens[1]);
-                } else {
-                    queryParamsMap.set(tokens[0], '');
-                }
-            });
-        }
+        const queryParamsMap = parseQueryString(window.location.search);
+        const token = valueOrDefault(queryParamsMap.get('token'));
+        const refreshToken = valueOrDefault(queryParamsMap.get('refreshToken'));
 
-        const code = queryParamsMap.get('code');
+        this.setState({
+            token: token,
+            refreshToken: refreshToken,
+            tabIndex: 0,
+        });
 
-        this.setState(
-            {
-                queryParams: queryParamsMap,
-                currentPageName: STOCKS_PAGE_NAME,
-                authorizedCode: code ? code : ''
-            }
-        );
-
-        if (queryParamsMap.get('code') == null) {
-            window.location.href = AUTHORIZE_URL + '?response_type=code&client_id='
-                + AUTHORIZE_CLIENT_ID + '&state=' + encodeURI(AUTHORIZE_STATE) + '&scope='
-                + AUTHORIZE_SCOPE + '&redirect_uri=' + encodeURI(window.location.href + 'oauthJump');
+        if (token === '' || refreshToken === '') {
+            // window.location.href = 'http://localhost:3004' + '?from=' + encodeURIComponent(window.location.href);
             return;
         }
     }
@@ -88,7 +65,7 @@ class App extends React.Component<Props, State> {
                 <DialogActions>
                     <Button
                         onClick={() => {
-                            this.props.errorMessage({message: ''});
+                            this.props.onErrorMessage({message: ''});
                         }}
                         color="primary"
                         autoFocus={true}
@@ -100,106 +77,64 @@ class App extends React.Component<Props, State> {
         );
     }
 
+    renderLoginFrame() {
+        return (
+            <div>
+                <iframe></iframe>
+            </div>
+        );
+    }
+
     render() {
-        if (this.state.authorizedCode == null || this.state.authorizedCode === '') {
-            return null;
+        if (this.state.token === '') {
+            return this.renderLoginFrame();
         }
 
-        let content: JSX.Element;
-        switch (this.state.currentPageName) {
-            case STOCKS_PAGE_NAME: {
-                content =
-                    <StocksPage/>;
-                break;
-            }
-            case INDEX_MANAGE_PAGE_NAME: {
-                content =
-                    <IndexManagePage/>;
-                break;
-            }
-            case MESSAGES_PAGE_NAME:
-                content = <MessagesPage/>;
-                break;
-            case SETTINGS_PAGE_NAME:
-                content = <SettingsPage/>;
-                break;
-            case MY_PAGE_NAME:
-                content = <MyPage/>;
-                break;
-            default:
-                console.error('default case');
-                return <div/>;
-        }
+        const tabStyle: CSSProperties = {
+            width: '20%',
+            height: '30px',
+        };
 
         return (
-            <div className="App">
-                <div className="App-Inner">
-                    <div className="App-LeftPanel">
-                        <div className="App-LeftPanel-Header">
-                            <span className="App-LeftPanel-Header-Name"> <label>Buffett</label></span>
-                        </div>
-                        <div className="App-LeftPanel-Divider"/>
-                        <List>
-                            <ListItem
-                                key={'stocks'}
-                                button={true}
-                                divider={true}
-                                onClick={() => {
-                                    this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_STOCKS);
-                                    this.setState({currentPageName: STOCKS_PAGE_NAME});
-                                }}
-                            >
-                                <label className="App-LeftPanel-Menu-Item-Text">股票</label>
-                            </ListItem>
-                            <ListItem
-                                key={'indexManage'}
-                                button={true}
-                                divider={true}
-                                onClick={() => {
-                                    this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_INDEX_MANAGE);
-                                    this.setState({currentPageName: INDEX_MANAGE_PAGE_NAME});
-                                }}
-                            >
-                                <label className="App-LeftPanel-Menu-Item-Text">指标</label>
-                            </ListItem>
-                            <ListItem
-                                key={'messages'}
-                                button={true}
-                                divider={true}
-                                onClick={() => {
-                                    this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_MESSAGES);
-                                    this.setState({currentPageName: MESSAGES_PAGE_NAME});
-                                }}
-                            >
-                                <label className="App-LeftPanel-Menu-Item-Text">消息</label>
-                            </ListItem>
-                            <ListItem
-                                key={'settings'}
-                                button={true}
-                                divider={true}
-                                onClick={() => {
-                                    this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_SETTINGS);
-                                    this.setState({currentPageName: SETTINGS_PAGE_NAME});
-                                }}
-                            >
-                                <label className="App-LeftPanel-Menu-Item-Text">设置</label>
-                            </ListItem>
-                            <ListItem
-                                key={'my'}
-                                button={true}
-                                divider={true}
-                                onClick={() => {
-                                    this.props.onAppTabItemClick(APP_TAB_ITEM_CLICK_MY);
-                                    this.setState({currentPageName: MY_PAGE_NAME});
-                                }}
-                            >
-                                <label className="App-LeftPanel-Menu-Item-Text">我的</label>
-                            </ListItem>
-                        </List>
-                    </div>
-                    <div className="App-Content">
-                        {content}
-                    </div>
+            <div>
+                <div
+                    style={{
+                        width: '100%',
+                        height: '48px',
+                        backgroundColor: '#333',
+                        color: '#FFF'}}
+                >
+                    <label
+                        style={{
+                            textAlign: 'center',
+                            float: 'center',
+                            display: 'block',
+                            fontSize: '200%',
+                        }}
+                    >
+                        Buffet助理
+                    </label>
+                </div>
+                <div style={{marginRight: 'auto', marginLeft: 'auto'}}>
+                    <Tabs
+                        value={this.state.tabIndex}
+                        onChange={(event: {}, v: number) => {
+                            this.setState({tabIndex: v});
+                        }}
+                    >
+                        <Tab style={tabStyle} label={'股票'}/>
+                        <Tab style={tabStyle} label={'指标'}/>
+                        <Tab style={tabStyle} label={'消息'}/>
+                        <Tab style={tabStyle} label={'设置'}/>
+                        <Tab style={tabStyle} label={'我的'}/>
+                    </Tabs>
+                </div>
+                <div>
+                    {this.state.tabIndex === TAB_STOCKS_PAGE && <StocksPage/>}
+                    {this.state.tabIndex === TAB_INDEX_MANAGE_PAGE && <IndexManagePage/>}
+                    {this.state.tabIndex === TAB_MESSAGES_PAGE && <MessagesPage/>}
+                    {this.state.tabIndex === TAB_SETTINGS_PAGE && <SettingsPage/>}
+                    {this.state.tabIndex === TAB_MY_PAGE && <MyPage/>}
                 </div>
                 {this.renderErrorMessage()}
             </div>
@@ -212,6 +147,5 @@ function selectProps(rootState: RootState) {
 }
 
 export default connect(selectProps, {
-        errorMessage,
-        onAppTabItemClick,
-    })(App);
+    onErrorMessage,
+})(App);

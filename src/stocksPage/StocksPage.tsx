@@ -1,27 +1,32 @@
 import * as React from 'react';
 import './StocksPage.css';
 import Button from 'material-ui/Button';
-import { Stock, UserIndexEvaluate, UserStockIndex } from '../apis/StockAssistant/gen/api';
 import Tabs, { Tab } from 'material-ui/Tabs';
-import {
-    apiUserStockIndexList, apiUserStockEvaluateList, apiUserIndexEvaluateList,
-    apiUserIndexEvaluateSave, apiStockGet, RootState, User, UserStockEvaluatedListState, onResetUserStockEvaluateList,
-    UserStockIndexListParams, StockGetParams, UserIndexEvaluateSaveParams, UserIndexEvaluateListParams,
-    UserStockEvaluateListParams
-} from '../redux';
 import { connect } from 'react-redux';
 import EvaluatedList from './components/EvaluatedList';
 import NotEvaluatedList from './components/NotEvaluatedList';
 import EvaluatingDialog from './components/EvaluatingDialog';
-import { Dispatchable } from '../_common/common';
-import { AnyAction } from 'redux';
+import {
+    apiStockGet,
+    apiUserIndexEvaluateList, apiUserIndexEvaluateSave, apiUserStockEvaluateList, apiUserStockIndexList,
+    onResetUserStockEvaluateList, RootState,
+    UserStockEvaluatedListState
+} from '../redux';
+import {
+    Stock, StockGetParams, UserIndexEvaluate, UserIndexEvaluateListParams, UserIndexEvaluateSaveParams,
+    UserStockEvaluateListParams,
+    UserStockIndex,
+    UserStockIndexListParams
+} from '../api/StockAssistant/gen/api';
+import { Dispatchable, StandardAction } from '../_common/action';
 
 const TAB_INDEX_EVALUATED = 0;
 const TAB_INDEX_NOT_EVALUATED = 1;
 const TAB_INDEX_AI_EVALUATE = 2;
 
+const testUid = '18616781549';
+
 interface Props {
-    user: User;
     userStockEvaluatedListState: UserStockEvaluatedListState;
     userStockIndexList: Array<UserStockIndex>;
     userIndexEvaluateListMap: Map<string, Array<UserIndexEvaluate>>;
@@ -32,7 +37,7 @@ interface Props {
     apiUserIndexEvaluateList: (p: UserIndexEvaluateListParams) => Dispatchable;
     apiUserIndexEvaluateSave: (p: UserIndexEvaluateSaveParams) => Dispatchable;
     apiStockGet: (p: StockGetParams) => Dispatchable;
-    onResetUserStockEvaluateList: () => AnyAction;
+    onResetUserStockEvaluateList: () => StandardAction;
 }
 
 interface State {
@@ -49,13 +54,13 @@ class StocksPage extends React.Component<Props, State> {
         this.onEvalDialogClose = this.onEvalDialogClose.bind(this);
         this.onEvalStarsChange = this.onEvalStarsChange.bind(this);
 
-        this.props.apiUserStockEvaluateList({userId: this.props.user.id, pageToken: '', pageSize: 40});
-        this.props.apiUserStockIndexList({userId: this.props.user.id});
+        this.props.apiUserStockEvaluateList({userId: testUid, pageToken: '', pageSize: 40});
+        this.props.apiUserStockIndexList({userId: testUid});
     }
 
     refreshStockEvaluateList(notEvaluated?: boolean) {
         this.props.apiUserStockEvaluateList({
-            userId: this.props.user.id,
+            userId: testUid,
             notEvaluated: notEvaluated,
             pageToken: '',
             pageSize: 40
@@ -67,17 +72,19 @@ class StocksPage extends React.Component<Props, State> {
 
         this.setState({evaluating: true, evaluatingStockId: stockId});
 
-        this.props.apiUserIndexEvaluateList({userId: this.props.user.id, stockId: stockId});
+        this.props.apiUserIndexEvaluateList({userId: testUid, stockId: stockId});
 
         this.props.apiStockGet({stockId: stockId});
     }
 
     onEvalStarsChange(indexName: string, evalStars: number) {
         this.props.apiUserIndexEvaluateSave({
-            userId: this.props.user.id,
+            userId: testUid,
             stockId: this.state.evaluatingStockId,
-            indexName: indexName,
-            evalStars: evalStars
+            indexEvaluate: {
+                indexName: indexName,
+                evalStars: evalStars
+            }
         });
     }
 
@@ -164,7 +171,7 @@ class StocksPage extends React.Component<Props, State> {
                     indexCount={this.props.userStockIndexList ? this.props.userStockIndexList.length : 0}
                     onLoadMore={(): void => {
                         this.props.apiUserStockEvaluateList({
-                            userId: this.props.user.id,
+                            userId: testUid,
                             pageToken: this.props.userStockEvaluatedListState.nextPageToken,
                             pageSize: 40
                         });
@@ -176,7 +183,7 @@ class StocksPage extends React.Component<Props, State> {
                     openEvaluateDialog={this.openEvaluateDialog}
                     onLoadMore={() => {
                         this.props.apiUserStockEvaluateList({
-                            userId: this.props.user.id,
+                            userId: testUid,
                             notEvaluated: true,
                             pageToken: this.props.userStockEvaluatedListState.nextPageToken,
                             pageSize: 40
@@ -198,7 +205,6 @@ class StocksPage extends React.Component<Props, State> {
 
 function selectProps(rootState: RootState) {
     return {
-        user: rootState.user,
         userStockEvaluatedListState: rootState.userStockEvaluatedListState,
         userStockIndexList: rootState.userStockIndexList,
         userIndexEvaluateListMap: rootState.userIndexEvaluateListMap,

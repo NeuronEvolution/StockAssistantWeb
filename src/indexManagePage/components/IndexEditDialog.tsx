@@ -7,8 +7,8 @@ import Dialog, {
     DialogTitle,
 } from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
-import { UserStockIndex } from '../../apis/StockAssistant/gen/api';
 import { CSSProperties } from 'react';
+import { UserStockIndex } from '../../api/StockAssistant/gen/api';
 
 export interface Props {
     adding: boolean;
