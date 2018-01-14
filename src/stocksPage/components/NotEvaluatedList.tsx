@@ -48,24 +48,29 @@ export default class NotEvaluatedList extends React.Component<Props> {
     render() {
         const hasMore = this.props.state.nextPageToken && this.props.state.nextPageToken !== '';
         return (
-            <List>
-                {this.props.state && this.props.state.items &&
-                this.props.state.items.map(this.renderItem.bind(this))}
-                <ListItem style={{width: '100%', height: '100%'}}>
-                    <Button
-                        style={{width: '100%', height: '100%'}}
-                        disabled={!hasMore}
-                        onClick={
-                            () => {
-                                console.log('onLoadMore');
-                                this.props.onLoadMore();
+            <div>
+                <div>
+                    <Button>筛选</Button>
+                </div>
+                <List>
+                    {this.props.state && this.props.state.items &&
+                    this.props.state.items.map(this.renderItem.bind(this))}
+                    <ListItem style={{width: '100%', height: '100%'}}>
+                        <Button
+                            style={{width: '100%', height: '100%'}}
+                            disabled={!hasMore}
+                            onClick={
+                                () => {
+                                    console.log('onLoadMore');
+                                    this.props.onLoadMore();
+                                }
                             }
-                        }
-                    >
-                        {hasMore ? '更多' : '没有更多了'}
-                    </Button>
-                </ListItem>
-            </List>
+                        >
+                            {hasMore ? '更多' : '没有更多了'}
+                        </Button>
+                    </ListItem>
+                </List>
+            </div>
         );
     }
 }

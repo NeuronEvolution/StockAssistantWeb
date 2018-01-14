@@ -1,6 +1,4 @@
 import * as React from 'react';
-import './StocksPage.css';
-import Button from 'material-ui/Button';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import { connect } from 'react-redux';
 import EvaluatedList from './components/EvaluatedList';
@@ -19,6 +17,7 @@ import {
     UserStockIndexListParams
 } from '../api/StockAssistant/gen/api';
 import { Dispatchable, StandardAction } from '../_common/action';
+import { CSSProperties } from 'react';
 
 const TAB_INDEX_EVALUATED = 0;
 const TAB_INDEX_NOT_EVALUATED = 1;
@@ -68,8 +67,6 @@ class StocksPage extends React.Component<Props, State> {
     }
 
     openEvaluateDialog(stockId: string): void {
-        console.log('openEvaluateDialog', this);
-
         this.setState({evaluating: true, evaluatingStockId: stockId});
 
         this.props.apiUserIndexEvaluateList({userId: testUid, stockId: stockId});
@@ -106,13 +103,18 @@ class StocksPage extends React.Component<Props, State> {
     }
 
     render() {
-        console.log(this.props.userStockIndexList);
+        const tabStyle: CSSProperties = {
+            width: '20%',
+            height: '30px',
+        };
+
         let userIndexEvaluateList = this.props.userIndexEvaluateListMap.get(this.state.evaluatingStockId);
         let stock = this.props.stockMap.get(this.state.evaluatingStockId);
         return (
-            <div className="StocksPage">
+            <div>
                 <Tabs
-                    className="StocksPage-ControlTab"
+                    fullWidth={true}
+                    centered={true}
                     value={this.state.controlTabIndex}
                     onChange={(event: {}, v: number) => {
                         this.setState({controlTabIndex: v});
@@ -128,42 +130,15 @@ class StocksPage extends React.Component<Props, State> {
                             case TAB_INDEX_AI_EVALUATE:
                                 break;
                             default:
-                                console.error('default case');
+                                throw 'never';
                         }
                     }}
                 >
-                    <Tab className="StocksPage-ControlTabItem" label="已评估"/>
-                    <Tab className="StocksPage-ControlTabItem" label="未评估"/>
-                    <Tab className="StocksPage-ControlTabItem" label="AI评估"/>
+                    <Tab style={tabStyle} label="已评估"/>
+                    <Tab style={tabStyle} label="未评估"/>
+                    <Tab style={tabStyle} label="AI评估"/>
                 </Tabs>
-                {this.state.controlTabIndex === TAB_INDEX_EVALUATED &&
-                <div className="StocksPage-ControlPanel">
-                    <div className="StocksPage-ControlPanel-ItemDiv">
-                        <Button className="StocksPage-ControlPanel-Button">总评分</Button>
-                    </div>
-                    <div className="StocksPage-ControlPanel-ItemDiv">
-                        <Button className="StocksPage-ControlPanel-Button">评估时间</Button>
-                    </div>
-                    <div className="StocksPage-ControlPanel-ItemDiv">
-                        <Button className="StocksPage-ControlPanel-Button">上市时间</Button>
-                    </div>
-                    <div className="StocksPage-ControlPanel-ItemDiv">
-                        <Button className="StocksPage-ControlPanel-Button">筛选</Button>
-                    </div>
-                </div>}
-                {this.state.controlTabIndex === TAB_INDEX_NOT_EVALUATED &&
-                <div className="StocksPage-ControlPanel">
-                    <div className="StocksPage-ControlPanel-ItemDiv">
-                        <Button className="StocksPage-ControlPanel-Button">筛选</Button>
-                    </div>
-                </div>}
-                {this.state.controlTabIndex === TAB_INDEX_AI_EVALUATE &&
-                <div className="StocksPage-ControlPanel">
-                    <div className="StocksPage-ControlPanel-ItemDiv">
-                        <Button className="StocksPage-ControlPanel-Button">筛选</Button>
-                    </div>
-                </div>}
-                <div className="StocksPage-Divider"/>
+                <div style={{height: '1px', backgroundColor: '#ddd'}}/>
                 {this.state.controlTabIndex === TAB_INDEX_EVALUATED &&
                 <EvaluatedList
                     state={this.props.userStockEvaluatedListState}

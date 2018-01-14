@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import registerServiceWorker from './registerServiceWorker';
 import {  Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -32,4 +31,3 @@ ReactDOM.render(
   <Root/>,
   document.getElementById('root') as HTMLElement
 );
-registerServiceWorker();

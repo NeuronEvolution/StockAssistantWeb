@@ -36,6 +36,28 @@ interface State {
 }
 
 class App extends React.Component<Props, State> {
+    static renderLoginFrame() {
+        return (
+            <div>
+                <iframe
+                    style={{
+                        position: 'absolute',
+                        margin: 'auto',
+                        top: '0',
+                        bottom: '0',
+                        left: '0',
+                        right: '0',
+                        width: '100%',
+                        height: '100%',
+                        border: '0px'
+                    }}
+                    src={'http://localhost:3004?fromOrigin=' + encodeURIComponent(window.location.origin)}
+                    onLoad={(e) => {console.log(e); }}
+                />
+            </div>
+        );
+    }
+
     componentWillMount() {
         const queryParamsMap = parseQueryString(window.location.search);
         const token = valueOrDefault(queryParamsMap.get('token'));
@@ -48,8 +70,6 @@ class App extends React.Component<Props, State> {
         });
 
         window.addEventListener('message', (e: MessageEvent): void => {
-            console.log('message', e.data);
-
             switch (e.data.type) {
                 case 'onLoginSuccess':
                     this.setState({
@@ -87,30 +107,9 @@ class App extends React.Component<Props, State> {
         );
     }
 
-    renderLoginFrame() {
-        return (
-            <div>
-                <iframe
-                    style={{
-                        position: 'absolute',
-                        margin: 'auto',
-                        top: '0',
-                        bottom: '0',
-                        left: '0',
-                        right: '0',
-                        width: '100%',
-                        height: '100%',
-                        border: '0px'
-                    }}
-                    src={'http://localhost:3004?fromOrigin=' + encodeURIComponent(window.location.origin)}
-                />
-            </div>
-        );
-    }
-
     render() {
         if (this.state.token === '') {
-            return this.renderLoginFrame();
+            return App.renderLoginFrame();
         }
 
         const tabStyle: CSSProperties = {
