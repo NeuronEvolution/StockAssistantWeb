@@ -243,7 +243,7 @@ function userStockEvaluatedListState(state: UserStockEvaluatedListState, action:
         case userStockEvaluateList_SUCCESS:
             let oldItems = state.items;
             state = {
-                items: oldItems,
+                items: [],
                 pageToken: action.payload.params.pageToken,
                 nextPageToken: action.payload.data.nextPageToken,
                 isFetching: false
@@ -251,7 +251,7 @@ function userStockEvaluatedListState(state: UserStockEvaluatedListState, action:
             if (action.payload.params.pageToken == null || action.payload.params.pageToken === '') {
                 state.items = action.payload.data.items;
             } else {
-                state.items = [...state.items, ...action.payload.data.items];
+                state.items = [...oldItems, ...action.payload.data.items];
             }
 
             return state;
